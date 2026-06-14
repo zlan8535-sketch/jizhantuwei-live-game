@@ -251,6 +251,29 @@ function normalizeEventType(body, data, gift) {
   return "unknown";
 }
 
+function mapGiftSoldierType(giftName, giftId, giftValue) {
+  const key = `${giftName || ""} ${giftId || ""}`.toLowerCase();
+  const value = Number(giftValue || 0);
+
+  if (key.includes("shotgun") || key.includes("short") || key.includes("能力药丸")) return "shotgun";
+  if (key.includes("machine") || key.includes("heavy") || key.includes("能量电池")) return "machine";
+  if (
+    key.includes("giant") ||
+    key.includes("超级空投") ||
+    key.includes("神秘空投") ||
+    key.includes("超能喷射") ||
+    key.includes("稀有宝箱")
+  ) {
+    return "giant";
+  }
+  if (key.includes("pistol") || key.includes("仙女棒")) return "pistol";
+
+  if (value === 10) return "shotgun";
+  if (value === 99) return "machine";
+  if ([520, 888, 1200, 3000].includes(value)) return "giant";
+  return "pistol";
+}
+
 function normalizeCallback(body) {
   const payload = getPrimaryPayload(body);
   const data = payload.data && typeof payload.data === "object" ? payload.data : payload;
@@ -269,6 +292,8 @@ function normalizeCallback(body) {
     gift.giftId,
     gift.id
   );
+  const giftName = pickFirst(payload.gift_name, payload.giftName, data.gift_name, data.giftName, gift.gift_name, gift.giftName, gift.name, giftId);
+  const giftValue = Number(pickFirst(payload.gift_value, payload.giftValue, data.gift_value, data.giftValue, gift.gift_value, gift.giftValue) || 0);
 
   return {
     msgType,
@@ -290,9 +315,10 @@ function normalizeCallback(body) {
       user.sec_openid
     ),
     nickName: pickFirst(payload.nickname, payload.nickName, payload.user_nickname, data.nickname, data.nickName, user.nickname, user.nickName, user.nick_name),
-    giftName: pickFirst(payload.gift_name, payload.giftName, data.gift_name, data.giftName, gift.gift_name, gift.giftName, gift.name, giftId),
+    giftName,
     giftId,
-    giftValue: Number(pickFirst(payload.gift_value, payload.giftValue, data.gift_value, data.giftValue, gift.gift_value, gift.giftValue) || 0),
+    giftValue,
+    giftType: msgType === "live_gift" ? mapGiftSoldierType(giftName, giftId, giftValue) : "",
     comment: pickFirst(payload.comment, payload.content, payload.text, payload.msg_content, data.comment, data.content, data.text, data.msg_content),
     enterRoomType: Number(pickFirst(payload.enter_room_type, data.enter_room_type) || 0),
     isOldPlayer: pickFirst(payload.is_old_player, data.is_old_player),
@@ -464,6 +490,7 @@ async function handleLiveDataCallback(req, res, callbackPath = "/live_data_callb
       msgType: event.msgType,
       msgId: event.msgId,
       roomId: event.roomId,
+      giftType: event.giftType,
       callbackPath,
       seq: event.seq
     }

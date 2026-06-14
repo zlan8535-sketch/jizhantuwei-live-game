@@ -79,8 +79,9 @@ async function main() {
           msg_id: "platform-gift-1",
           sec_openid: "platform-openid",
           sec_gift_id: "platform-gift-id",
+          gift_name: "超级空投",
           gift_num: 1,
-          gift_value: 10,
+          gift_value: 888,
           nickname: "platform-user",
           timestamp: Date.now(),
           test: true
@@ -89,6 +90,7 @@ async function main() {
     });
     assert.equal(platformGift.response.status, 200);
     assert.equal(platformGift.body.data.msgType, "live_gift");
+    assert.equal(platformGift.body.data.giftType, "giant");
     assert.equal(platformGift.body.data.roomId, "room-header");
 
     const platformViewerEnter = await request("/live_data_callback", {
