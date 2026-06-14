@@ -97,7 +97,12 @@ Current debug gift mapping after the 2026-06-14 real-live pass:
 
 - For easier live-room testing, all four gift tiers are configured as low-price `仙女棒` variants.
 - The saved platform mapping is: `仙女棒（1钻石）` -> 10 pistol soldiers, `蓝色仙女棒（1钻石）` -> 10 shotgun soldiers, `紫色仙女棒（1钻石）` -> 10 machine-gun soldiers, `黄色仙女棒（1钻石）` -> 10 giant soldiers.
-- Real payloads may only expose encrypted `sec_gift_id` and `sec_magic_gift_id`; capture any new magic ids from `/api/live/events` and add them to `PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE`.
+- Real payloads for the current colored fairy-stick setup exposed empty `magicGiftId` and distinct encrypted `sec_gift_id` values, so the deployed cloud service now maps those ids directly:
+  - `n1/Dg1905sj1FyoBlQBvmbaDZFBNaKuKZH6zxHkv8Lg5x2cRfrKUTb8gzMs=` -> `pistol`
+  - `eplFUy7i0B0fiv0Iym1MpOZa5XmUE8g/WUAyJ6Tc+UJJDpcs7pzclNOz/WM=` -> `shotgun`
+  - `4I66OIE1HKWfM7PNvAHtAgYUSNlggSEgcpo3ai8GYQXAWqjrDuH8NtjsWEQ=` -> `machine`
+  - `gs+95ujNzXXSCtLTv97fWgbApTQi0sqz1BULB+7w62g+v4sFxINvxOIrXCw=` -> `giant`
+- If platform gift ids change again, capture new ids from `/api/live/events` and add them to `PLATFORM_GIFT_ID_TO_SOLDIER_TYPE`; use `PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE` only when the payload actually includes `sec_magic_gift_id`.
 
 Client cloud polling fallback:
 
@@ -132,18 +137,19 @@ Git status:
 - The accidental JiZhanTuWei commit in that old MRTGD repository was reverted with commit `a2f9670 Revert "Adapt cloud service for JiZhanTuWei app"`.
 - Dedicated JiZhanTuWei repository: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`
 - Initial pushed project commit: `8c42651 Initialize JiZhanTuWei live project`
-- Latest deployed commit: `a0b468f Map Douyin self-test gift ids`
+- Latest deployed commit: `f292257 Map live colored fairy stick ids`
 - This repository is selected in Douyin Cloud Git deployment for APPID `tt02d6746b9cb2fc0e10`.
 
-Deployment status as of 2026-06-14 17:04:
+Deployment status as of 2026-06-14 22:38:
 
 - Target env: `env-cuABsk2rKR`
 - Target service: `jztw-live-svc`
 - Target service id: `1m3j5q7o3dezm`
-- Release id: `427723`
+- Release id: `427819`
 - Domain: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
 - `GET /api/health` returns `jizhantuwei-live-cloud-service`.
-- Latest Git publish note: `live viewer avatar support`.
+- Latest Git publish note: `map live colored fairy stick ids`.
+- Direct deployed callback verification after release `427819` returned expected gift types for all four 1-diamond fairy-stick variants: `pistol`, `shotgun`, `machine`, and `giant`.
 - After the latest publish, a direct callback with `avatar_url` returned an event with top-level `avatarUrl`, confirming the deployed cloud service includes the avatar normalization change.
 - Open Platform self-test push path is configured to `jztw-live-svc` path `/live_data_callback (jztw_live_data)` for gift, comment, and like tabs.
 - Platform self-test pushed all four configured gift tiers, comment `加入`, and two like count `10` events successfully through Douyin Cloud.

@@ -1,3 +1,50 @@
+## 2026-06-14 22:38 - Real Colored Fairy Stick Gift Mapping
+
+Status: Done / Needs user live-room retest
+
+What changed:
+- Investigated the user's report that all real live gifts spawned normal soldiers.
+- Confirmed the real platform callbacks for the low-price colored fairy-stick setup send empty `magicGiftId` and distinct encrypted `sec_gift_id` values.
+- Added the observed real `sec_gift_id` mappings in `douyin-cloud-service/server.js`:
+  - default fairy stick -> `pistol`
+  - blue fairy stick -> `shotgun`
+  - purple fairy stick -> `machine`
+  - yellow fairy stick -> `giant`
+- Published Douyin Cloud release `427819` from Git commit `f292257eec55fdba15e99652ba5f9e0e2760810c` with note `map live colored fairy stick ids`.
+
+Files touched:
+- `douyin-cloud-service/server.js`
+- `douyin-cloud-service/smoke-test.js`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `node --check douyin-cloud-service/server.js`
+- `node --check douyin-cloud-service/smoke-test.js`
+- `node douyin-cloud-service/smoke-test.js`
+- `git commit -m "Map live colored fairy stick ids"`
+- `git push origin main`
+- Chrome publish through Douyin Cloud Git deploy page.
+- `POST https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/live_data_callback`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+
+Verification:
+- Douyin Cloud publish page shows `publish status: success` and deployment log ends with `deploy complete`.
+- Deployed service health returns `jizhantuwei-live-cloud-service`.
+- After deploy, the in-memory queue restarted at `latestSeq: 0`, confirming the new container is active.
+- Direct deployed callback verification returned:
+  - seq `1`: default fairy-stick `sec_gift_id` -> `giftType=pistol`
+  - seq `2`: blue fairy-stick `sec_gift_id` -> `giftType=shotgun`
+  - seq `3`: purple fairy-stick `sec_gift_id` -> `giftType=machine`
+  - seq `4`: yellow fairy-stick `sec_gift_id` -> `giftType=giant`
+
+Risks / notes:
+- The blue/purple/yellow mapping is inferred from the current platform gift config and the user's observed real callback order. If a later live-room retest shows two colors swapped, only the three colored `sec_gift_id` map entries need to be swapped.
+- No client package rebuild or reupload is needed for this fix because the Cocos client already routes `giftType`; only cloud normalization changed.
+
+Next step:
+- Ask the user to retest the four configured gifts in the real live room. Confirm the game shows 10 pistol, 10 shotgun, 10 machine-gun, and 10 giant soldiers respectively.
+
 ## 2026-06-14 22:09 - 1.0.7 Startup Network Error Check
 
 Status: Done / User should retry after deployment completed
