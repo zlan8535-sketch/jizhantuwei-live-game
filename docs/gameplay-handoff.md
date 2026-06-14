@@ -1,3 +1,35 @@
+## 2026-06-14 18:05 - Platform Self-Test After 1.0.4
+
+Status: Done / Real phone visual verification still needed
+
+What changed:
+- Ran Open Platform self-test after `1.0.4_` was deployed.
+- Selected test role `JZTWTest`.
+- Pushed gift, comment, and like test data through the platform self-test tool.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- Chrome self-test on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/diagnose_tool?subTab=1&tab=openAPI`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=3`
+
+Verification:
+- Platform self-test UI showed push success for gifts, comment, and like.
+- Cloud events advanced from seq `3` to seq `10`.
+- New cloud events included:
+  - seq `4`-`8`: `live_gift`, mapped to `shotgun`, `pistol`, `machine`, `giant`, `pistol`.
+  - seq `9`: `live_comment`, comment `加入`.
+  - seq `10`: `live_like`, count `10`.
+- All new test events used room `1123456789123456789`, nick `JZTWTest`, source `douyin-platform, internal-callback`, and included a platform avatar URL.
+
+Risks / notes:
+- This proves platform self-test callbacks reach the cloud service after `1.0.4_`.
+- User already reported real phone live likes work, but the final avatar size tuning still needs phone/live companion visual confirmation after relaunching the debug package.
+
+Next step:
+- Relaunch `1.0.4_` from the phone/live companion debug entry and visually confirm avatar size in the real live session.
+
 ## 2026-06-14 17:50 - Mobile Live Avatar Size Retune
 
 Status: Done / Platform deployed / Needs phone visual verification
