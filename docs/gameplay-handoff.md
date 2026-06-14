@@ -1,3 +1,40 @@
+## 2026-06-14 12:43 - Local Cloud Event Polling Verified
+
+Status: Done / Needs deployed cloud verification
+
+What changed:
+- Added a client polling fallback for Douyin Cloud callbacks: the Cocos client can read `liveCloudUrl`, `jztwCloudUrl`, `cloudUrl`, `window.__JZTW_LIVE_CLOUD_URL__`, `window.__DY_LIVE_CLOUD_URL__`, or localStorage values and poll `/api/live/events`.
+- Cloud events are translated into the existing live bridge: gift -> `onLiveGift`, like -> `onLiveLike`, comment -> `onLiveComment`.
+- Initial cloud sync uses `latestSeq` so old callbacks are not replayed when the page first opens.
+- Added bridge helpers `window.__JZTW_LIVE__.setCloudUrl(url)` and `window.__JZTW_LIVE__.pollCloud()`.
+- Disabled the legacy `PrivacyUI` auto-popup during live preview by marking `showPrivacy=false` in `AutoCheck`; this removes the large first-launch privacy overlay from local preview.
+
+Files touched:
+- `assets/Game/Script/Common/LevelManager.ts`
+- `assets/UI/HomeUI/AutoCheck.ts`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `& 'C:\CocosCreator\3.8.3\CocosCreator.exe' --project 'C:\projects\JiZhanTuWei_3.8.3ts' --build 'platform=web-mobile;debug=false'`
+- `POST http://127.0.0.1:18080/live_data_callback` with local comment and gift test payloads.
+- `GET http://127.0.0.1:18080/api/live/events?after=...`
+
+Verification:
+- Build passed: `temp/builder/log/web-mobile2026-6-14 12-40.log`, `build success in 18956`.
+- Local cloud health returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- Preview URL verified: `http://127.0.0.1:8080/index.html?v=1781262000000&liveCloudUrl=http%3A%2F%2F127.0.0.1%3A18080`.
+- Client log showed `Live cloud synced at seq 3`.
+- Simulated gift `gift_giant_10` produced client log `礼物出兵: PreviewGift2 巨人兵x10` and visible giant soldiers in the preview.
+- The privacy policy overlay no longer blocks first-screen preview.
+
+Risks / notes:
+- This proves the fallback local chain: cloud service -> `/api/live/events` -> gameplay client. It does not prove the real Douyin platform callback chain until the app is launched through the official live/debug entry with real `roomId`.
+- The currently known public cloud URL still belongs to the old MRTGD route and must not be used as the JiZhanTuWei deployment target.
+
+Next step:
+- Bind/deploy Douyin Cloud for APPID `tt02d6746b9cb2fc0e10` from `https://github.com/zlan8535-sketch/jizhantuwei-live-game`, then configure comment/like/gift abilities and verify real callbacks reach `/live_data_callback` and the gameplay client.
+
 ## 2026-06-14 12:27 - Dedicated GitHub Repository Created
 
 Status: Done / Needs platform binding

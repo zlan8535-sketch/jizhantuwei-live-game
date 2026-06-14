@@ -2,7 +2,7 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source exists locally, and a dedicated JiZhanTuWei GitHub remote has been created, but Douyin Cloud deployment, platform ability configuration, upload, and real live-room verification are not complete yet.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source exists locally, a dedicated JiZhanTuWei GitHub remote has been created, and the local cloud-service-to-client polling fallback has been verified. Douyin Cloud deployment, platform ability configuration, upload, and real live-room verification are not complete yet.
 
 ## Current Package
 
@@ -54,9 +54,20 @@ Client bridge already exists:
 - `window.__JZTW_LIVE__.comment(payload)`
 - `window.__JZTW_LIVE__.like(payload)`
 - `window.__JZTW_LIVE__.gift(payload)`
+- `window.__JZTW_LIVE__.setCloudUrl(url)`
+- `window.__JZTW_LIVE__.pollCloud()`
 - alias: `window.__DY_LIVE_GAME__`
 
 The bridge accepts `viewerId`, `userId`, `openId`, `secUid`, `nickName`, `avatarUrl`, `count`, `giftId`, `giftName`, `giftType`, and optional `soldierCount`.
+
+Client cloud polling fallback:
+
+- Configure by URL query: `liveCloudUrl`, `jztwCloudUrl`, or `cloudUrl`.
+- Configure by global value before boot: `window.__JZTW_LIVE_CLOUD_URL__` or `window.__DY_LIVE_CLOUD_URL__`.
+- Configure by localStorage: `JZTW_LIVE_CLOUD_URL` or `DY_LIVE_CLOUD_URL`.
+- The client polls `GET /api/live/events?after=<seq>` once per second.
+- Initial sync uses `latestSeq` and does not replay old callbacks.
+- Local verification on 2026-06-14: `gift_giant_10` from `http://127.0.0.1:18080/live_data_callback` produced `礼物出兵: PreviewGift2 巨人兵x10` in the preview.
 
 ## Douyin Cloud Git Publish / Deploy
 
@@ -111,6 +122,7 @@ POST /start_game
 POST /live_data_callback
 GET  /api/douyin/diagnostics
 GET  /api/live/state
+GET  /api/live/events
 ```
 
 Prepared service files:
@@ -155,7 +167,8 @@ The goal is not complete until all gates pass:
 - Platform abilities for comment, like, and gift are configured or approved.
 - Douyin Cloud Git publish/deploy is complete for the service used by this APPID.
 - The deployed `/api/health` returns `jizhantuwei-live-cloud-service`, not `mrtgd-live-cloud-service`.
-- The client delivery path is implemented and verified: platform callback -> cloud service -> gameplay client -> `__JZTW_LIVE__`.
+- The client delivery path is implemented and locally verified: local callback -> cloud service -> `/api/live/events` -> gameplay client -> `__JZTW_LIVE__`.
+- The deployed client delivery path is verified with a real platform callback: official live/debug entry -> Douyin Cloud `/live_data_callback` -> `/api/live/events` -> gameplay client.
 - Debug package upload succeeds on the Douyin Open Platform.
 - Cloud deployment succeeds.
 - Official launch provides real live-room context.

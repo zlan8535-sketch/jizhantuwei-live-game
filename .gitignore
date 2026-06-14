@@ -16,6 +16,7 @@ release/
 /*.log
 douyin-*.png
 gm-verify-*.png
+douyin-cloud-service/*.log
 
 #//////////////////////////
 # NPM

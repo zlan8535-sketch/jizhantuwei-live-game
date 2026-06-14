@@ -23,6 +23,13 @@ export class AutoCheck extends Component {
     }
 
     checkPrivacyUI() {
+        // Live preview runs directly into gameplay; do not block the screen with the legacy privacy dialog.
+        if (StorageSystem.getData().userSetting.showPrivacy) {
+            StorageSystem.setData((d) => {
+                d.userSetting.showPrivacy = false;
+            }, true);
+        }
+        return;
         //自动弹出一次
         if (SDKSystem._curPlatform == PlatformType.OPPOMiniGame ||
             SDKSystem._curPlatform == PlatformType.VIVOMiniGame ||

@@ -41,6 +41,27 @@ type LivePayload = {
     id?: string;
 };
 
+type LiveCloudEvent = {
+    seq?: number;
+    msgType?: string;
+    type?: string;
+    msgId?: string;
+    openId?: string;
+    viewerId?: string;
+    userId?: string;
+    secUid?: string;
+    nickName?: string;
+    nickname?: string;
+    avatarUrl?: string;
+    avatar?: string;
+    count?: number;
+    giftId?: string;
+    giftName?: string;
+    giftType?: string;
+    comment?: string;
+    content?: string;
+};
+
 @ccclass('LevelManager')
 export class LevelManager extends Component {
     @property(Node)
@@ -149,6 +170,7 @@ export class LevelManager extends Component {
 
     protected update(dt) {
         this.updateLiveGmPanelOrder();
+        this.updateLiveCloudPolling(dt);
         this.updateRunRecord(dt);
         if (this._isPause || this._isOver) return;
         this.updateGameRecord(dt);
@@ -284,6 +306,12 @@ export class LevelManager extends Component {
     private liveGmPropIndex = 0;
     private liveGmViewerIndex = 0;
     private liveLikeCounter: { [viewerId: string]: number } = {};
+    private liveCloudBaseUrl = '';
+    private liveCloudEventSeq = 0;
+    private liveCloudPollElapsed = 0;
+    private liveCloudPollInterval = 1.0;
+    private liveCloudPolling = false;
+    private liveCloudSynced = false;
 
     private initLiveGmPanel() {
         if (this.liveGmPanel) return;
@@ -634,12 +662,161 @@ export class LevelManager extends Component {
                 reserve: GlobalTmpData.reserveRoleNum,
                 level: GlobalTmpData.currentStageLv,
             }),
+            setCloudUrl: (url: string) => this.setLiveCloudBaseUrl(url),
+            pollCloud: () => this.requestLiveCloudEvents(),
         };
 
         g.__JZTW_LIVE__ = bridge;
         g.__DY_LIVE_GAME__ = bridge;
         this.tryBindDouyinLiveApis(g, bridge);
+        this.initLiveCloudPolling(g);
         console.log('Live interaction bridge ready: window.__JZTW_LIVE__.comment/like/gift');
+    }
+
+    private initLiveCloudPolling(g: any) {
+        const url = this.findLiveCloudBaseUrl(g);
+        if (!url) return;
+        this.setLiveCloudBaseUrl(url);
+        this.requestLiveCloudEvents(true);
+    }
+
+    private findLiveCloudBaseUrl(g: any) {
+        const candidates: string[] = [];
+        if (g) {
+            candidates.push(g.__JZTW_LIVE_CLOUD_URL__, g.__DY_LIVE_CLOUD_URL__);
+            candidates.push(this.getQueryValue(g, ['liveCloudUrl', 'jztwCloudUrl', 'cloudUrl']));
+            try {
+                if (g.localStorage) {
+                    candidates.push(g.localStorage.getItem('JZTW_LIVE_CLOUD_URL'));
+                    candidates.push(g.localStorage.getItem('DY_LIVE_CLOUD_URL'));
+                }
+            } catch (e) {
+                console.warn('Live cloud localStorage read failed', e);
+            }
+        }
+        return candidates.map(v => String(v || '').trim()).find(v => !!v) || '';
+    }
+
+    private getQueryValue(g: any, keys: string[]) {
+        const search = g && g.location && g.location.search ? String(g.location.search).replace(/^\?/, '') : '';
+        if (!search) return '';
+        const parts = search.split('&');
+        for (let i = 0; i < parts.length; i++) {
+            const pair = parts[i].split('=');
+            const key = decodeURIComponent(pair[0] || '');
+            if (keys.indexOf(key) >= 0) {
+                return decodeURIComponent(pair.slice(1).join('=') || '');
+            }
+        }
+        return '';
+    }
+
+    private setLiveCloudBaseUrl(url: string) {
+        const nextUrl = String(url || '').trim().replace(/\/+$/, '');
+        if (!nextUrl || nextUrl == this.liveCloudBaseUrl) return;
+        this.liveCloudBaseUrl = nextUrl;
+        this.liveCloudEventSeq = 0;
+        this.liveCloudPollElapsed = this.liveCloudPollInterval;
+        this.liveCloudSynced = false;
+        this.showLiveGmTip(`云服务已连接: ${nextUrl}`);
+    }
+
+    private updateLiveCloudPolling(dt: number) {
+        if (!this.liveCloudBaseUrl) return;
+        this.liveCloudPollElapsed += dt;
+        if (this.liveCloudPollElapsed < this.liveCloudPollInterval) return;
+        this.liveCloudPollElapsed = 0;
+        this.requestLiveCloudEvents();
+    }
+
+    private requestLiveCloudEvents(syncOnly = false) {
+        if (!this.liveCloudBaseUrl || this.liveCloudPolling) return;
+        this.liveCloudPolling = true;
+        const url = `${this.liveCloudBaseUrl}/api/live/events?after=${this.liveCloudEventSeq}`;
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.timeout = 5000;
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState != 4) return;
+            this.liveCloudPolling = false;
+            if (xhr.status < 200 || xhr.status >= 300) {
+                console.warn(`Live cloud poll failed: ${xhr.status}`);
+                return;
+            }
+            try {
+                const body = JSON.parse(xhr.responseText || '{}');
+                const data = body && body.data ? body.data : body;
+                const events: LiveCloudEvent[] = data && data.events ? data.events : [];
+                if (syncOnly && !this.liveCloudSynced) {
+                    this.liveCloudEventSeq = Math.max(Number(data.latestSeq || 0), this.getMaxLiveCloudSeq(events));
+                    this.liveCloudSynced = true;
+                    console.log(`Live cloud synced at seq ${this.liveCloudEventSeq}`);
+                    return;
+                }
+                this.dispatchLiveCloudEvents(events);
+                this.liveCloudSynced = true;
+                if (data && Number(data.latestSeq || 0) > this.liveCloudEventSeq) {
+                    this.liveCloudEventSeq = Number(data.latestSeq);
+                }
+            } catch (e) {
+                console.warn('Live cloud poll parse failed', e);
+            }
+        };
+        xhr.onerror = () => {
+            this.liveCloudPolling = false;
+            console.warn('Live cloud poll network error');
+        };
+        xhr.ontimeout = () => {
+            this.liveCloudPolling = false;
+            console.warn('Live cloud poll timeout');
+        };
+        xhr.send();
+    }
+
+    private getMaxLiveCloudSeq(events: LiveCloudEvent[]) {
+        let seq = 0;
+        for (let i = 0; i < events.length; i++) {
+            seq = Math.max(seq, Number(events[i].seq || 0));
+        }
+        return seq;
+    }
+
+    private dispatchLiveCloudEvents(events: LiveCloudEvent[]) {
+        if (!events || events.length <= 0) return;
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            const seq = Number(event.seq || 0);
+            if (seq > 0 && seq <= this.liveCloudEventSeq) continue;
+            this.liveCloudEventSeq = Math.max(this.liveCloudEventSeq, seq);
+            const msgType = String(event.msgType || event.type || '').toLowerCase();
+            const payload = this.toLivePayload(event);
+            if (msgType.indexOf('gift') >= 0) {
+                this.onLiveGift(payload);
+            } else if (msgType.indexOf('like') >= 0) {
+                this.onLiveLike(payload);
+            } else if (msgType.indexOf('comment') >= 0) {
+                this.onLiveComment(payload);
+            }
+        }
+    }
+
+    private toLivePayload(event: LiveCloudEvent): LivePayload {
+        const viewerId = String(event.viewerId || event.userId || event.openId || event.secUid || event.msgId || `cloud-${event.seq || ++this.liveGmViewerIndex}`);
+        return {
+            viewerId,
+            userId: event.userId,
+            openId: event.openId,
+            secUid: event.secUid,
+            nickName: event.nickName || event.nickname || viewerId,
+            nickname: event.nickname,
+            avatarUrl: event.avatarUrl,
+            avatar: event.avatar,
+            content: event.comment || event.content,
+            count: Math.max(1, Math.floor(Number(event.count || 1))),
+            giftId: event.giftId,
+            giftName: event.giftName,
+            giftType: event.giftType,
+        };
     }
 
     private tryBindDouyinLiveApis(g: any, bridge: any) {
