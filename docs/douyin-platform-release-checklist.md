@@ -3,16 +3,16 @@
 ## Current Authoritative Status
 
 - APPID: `tt02d6746b9cb2fc0e10`
-- Current debug package: `1.0.5_`
-- Platform status: deployed on 2026-06-14 18:25, cloud start enabled at `1080P / 9:16`
-- Upload package: `release/douyin-debug/JiZhanTuWei_1.0.5.zip`
-- Package SHA256: `5F1231147EDB2ADFFCEDC64296F4FA2D76092167C6BC53799FD5158C020E750E`
-- Package size: `220752873`
+- Current debug package: `1.0.6_`
+- Platform status: deployed on 2026-06-14 19:16:41, cloud start enabled at `1080P / 9:16`
+- Upload package: `release/douyin-debug/JiZhanTuWei_1.0.6.zip`
+- Package SHA256: `02DF468AE5C4AE57DD25123289E3EF188D4B1F04AD9BFFEA44820D5BE0CE59DB`
+- Package size: `220752872`
 - Launch exe: `JiZhanTuWei.exe`
 - Live mechanics: comment, like, and gift callbacks are connected through the target Douyin Cloud service.
-- Latest client change: phone-oriented round viewer avatar sizing, normal `18px`, giant `22px`.
-- Remaining gate: relaunch `1.0.5_` from phone/live companion and visually verify avatar size plus comment/like/gift feedback in the real mobile stream view.
-- Validation sheet: `docs/douyin-live-validation-1.0.5.md`
+- Latest client change: phone-oriented round viewer avatar sizing, normal `26px`, giant `32px`.
+- Remaining gate: relaunch `1.0.6_` from phone/live companion and visually verify avatar size plus comment/like/gift feedback in the real mobile stream view.
+- Validation sheet: `docs/douyin-live-validation-1.0.6.md`
 
 APPID: `tt02d6746b9cb2fc0e10`
 

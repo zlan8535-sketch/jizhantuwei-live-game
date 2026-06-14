@@ -1,0 +1,71 @@
+# Douyin Live Validation Sheet - 1.0.6
+
+APPID: `tt02d6746b9cb2fc0e10`
+Debug package: `1.0.6_`
+Cloud service: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
+Launch exe: `JiZhanTuWei.exe`
+Cloud start: `1080P / 9:16`
+
+## Purpose
+
+Use this sheet to validate the deployed `1.0.6_` package from the real phone/live companion flow. This package keeps the live interaction logic from `1.0.5_` and retunes viewer soldier avatars for phone viewing: normal avatars are `26px`, giant avatars are `32px`.
+
+## Preflight
+
+- Open the debug package from phone/live companion, not from an already-running old session.
+- Confirm the package shown in Open Platform is `1.0.6_` and status is deployed.
+- Before testing, record the current cloud sequence:
+
+```powershell
+$r = Invoke-WebRequest -Uri 'https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0' -UseBasicParsing -TimeoutSec 20
+($r.Content | ConvertFrom-Json).data.latestSeq
+```
+
+## Test Cases
+
+| Case | Action | Expected cloud event | Expected in-game feedback | Pass |
+| --- | --- | --- | --- | --- |
+| Comment join | Send the configured join/test comment from a live/debug account | `live_comment` with real `roomId`, `nickName`, and `avatarUrl` | A viewer soldier joins; round avatar is shown on the soldier head | |
+| Like | Send at least 10 likes | `live_like` with `count` | Like threshold produces viewer soldier feedback | |
+| Small gift | Send the configured small gift | `live_gift`, `giftType=pistol` | Gift banner appears; 10 pistol viewer soldiers join or enter reserve | |
+| Mid gift | Send the configured mid gift | `live_gift`, `giftType=shotgun` | Gift banner appears; 10 shotgun viewer soldiers join or enter reserve | |
+| High gift | Send the configured high gift | `live_gift`, `giftType=machine` | Gift banner appears; 10 machine-gun viewer soldiers join or enter reserve | |
+| Top gift | Send the configured top gift | `live_gift`, `giftType=giant` | Gift banner appears; 10 giant viewer soldiers join or enter reserve | |
+
+## Avatar Acceptance
+
+- Viewer avatars must be circular and clipped to the soldier head shape.
+- Normal viewer avatar size should be readable on the phone live view, currently `26px`.
+- Giant viewer avatar size should be readable on the phone live view, currently `32px`.
+- Avatars should not block the main count text, GM panel, gift banner, or damage ranking.
+- If avatars still feel too small or too large on phone, retune `RoleLayer.ts`, rebuild, package, upload the next debug version, and repeat this sheet.
+
+## Cloud Evidence
+
+After testing, record events after the preflight sequence:
+
+```powershell
+$after = <preflight-latestSeq>
+$r = Invoke-WebRequest -Uri "https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=$after" -UseBasicParsing -TimeoutSec 20
+$json = $r.Content | ConvertFrom-Json
+"latestSeq=$($json.data.latestSeq) newCount=$($json.data.events.Count)"
+$json.data.events | ForEach-Object {
+  "seq=$($_.seq) type=$($_.msgType) room=$($_.roomId) nick=$($_.nickName) giftType=$($_.giftType) giftValue=$($_.giftValue) count=$($_.count) comment=$($_.comment) avatar=$([bool]$_.avatarUrl) source=$($_.source)"
+}
+```
+
+## Pass Criteria
+
+- Comment, like, and gift callbacks all reach Douyin Cloud with real room context.
+- The gameplay running from `1.0.6_` consumes the callbacks without local query parameters.
+- Viewer soldiers, gift banners, and avatar visuals are visible in the real phone/live companion view.
+- The streamer accepts the avatar size and readability.
+
+## Result
+
+- Tester:
+- Test time:
+- Preflight latestSeq:
+- New event seq range:
+- Phone visual result:
+- Notes:

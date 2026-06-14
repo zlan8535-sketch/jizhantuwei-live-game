@@ -666,8 +666,8 @@ export class RoleLayer extends BasicLayer {
         const node = new Node(`Avatar_${role.viewerData.nickName}`);
         node.parent = this.viewerAvatarLayer;
         node.layer = this.viewerAvatarLayer.layer;
-        const avatarSize = role.viewerData.isGiant ? 22 : 18;
-        const fallbackSize = avatarSize + 3;
+        const avatarSize = role.viewerData.isGiant ? 32 : 26;
+        const fallbackSize = avatarSize + 4;
         const trans = node.addComponent(UITransform);
         trans.setContentSize(fallbackSize, fallbackSize);
         const graphics = node.addComponent(Graphics);
@@ -682,7 +682,7 @@ export class RoleLayer extends BasicLayer {
         const labelTrans = labelNode.addComponent(UITransform);
         labelTrans.setContentSize(fallbackSize, fallbackSize);
         const label = labelNode.addComponent(Label);
-        label.fontSize = role.viewerData.isGiant ? 13 : 10;
+        label.fontSize = role.viewerData.isGiant ? 17 : 13;
         label.color = Color.WHITE;
         label.horizontalAlign = Label.HorizontalAlign.CENTER;
         label.verticalAlign = Label.VerticalAlign.CENTER;

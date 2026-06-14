@@ -1,3 +1,41 @@
+## 2026-06-14 19:16 - Mobile Avatar Retune 1.0.6
+
+Status: Done / Platform deployed / Needs phone visual verification
+
+What changed:
+- User re-tested the phone live flow: likes work, but viewer avatars were still too small in the mobile stream view.
+- Increased viewer soldier avatar size for phone viewing: normal viewer avatars now use `26px`, giant viewer avatars use `32px`.
+- Increased fallback circle padding to `avatarSize + 4` and fallback label sizes to normal `13px`, giant `17px`.
+- Rebuilt `build\web-mobile`, regenerated `release\douyin-debug\JiZhanTuWei_1.0.6.zip`, and uploaded it to APPID `tt02d6746b9cb2fc0e10`.
+- Added a `1.0.6_` phone validation sheet and updated the platform release checklist.
+
+Files touched:
+- `assets/Game/Script/Custom/RoleLayer.ts`
+- `docs/douyin-platform-release-checklist.md`
+- `docs/douyin-live-validation-1.0.6.md`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
+- Repacked `release\douyin-debug\JiZhanTuWei_1.0.6.zip` from the `1.0.5` Windows shell and the latest `build\web-mobile` assets.
+- Chrome upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- Local preview: `http://127.0.0.1:8080/index.html?v=1781435260032&liveCloudUrl=https%3A%2F%2F1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
+
+Verification:
+- Latest build log `temp\builder\log\web-mobile2026-6-14 19-03.log` ended with `build success`.
+- `build\web-mobile\assets\Game\index.js` contains `?32:26`, no longer contains `?22:18`, and still contains `GRAPHICS_ELLIPSE` plus `__JZTW_LIVE__`.
+- `release\douyin-debug\JiZhanTuWei_1.0.6\assets\Game\index.js` and the zip entry both passed the same checks.
+- Package SHA256: `02DF468AE5C4AE57DD25123289E3EF188D4B1F04AD9BFFEA44820D5BE0CE59DB`; size `220752872`.
+- Local preview ran at `540x960`; a direct cloud test gift was accepted as seq `18` and the client logs showed `viewer join preview_avatar_mobile_26032 x10` plus `礼物出兵`.
+- Open Platform accepted `1.0.6_` at `2026-06-14 19:16:41`; later status check confirmed `部署完成`, cloud start `1080P / 9:16`.
+
+Risks / notes:
+- Direct local/cloud preview proves the deployed client resources and event bridge path, but final acceptance still depends on the user's real phone/live companion visual check of `1.0.6_`.
+- The screenshot API timed out against the Cocos canvas, so the preview was verified by the visible in-app browser plus DOM/canvas/log checks.
+
+Next step:
+- Relaunch `1.0.6_` from phone/live companion and verify avatar readability with real like/comment/gift events.
+
 ## 2026-06-14 18:58 - 1.0.5 Cloud Smoke After Deployment
 
 Status: Done / Goal still needs phone live visual verification
