@@ -306,6 +306,7 @@ export class LevelManager extends Component {
     private liveGmPropIndex = 0;
     private liveGmViewerIndex = 0;
     private liveLikeCounter: { [viewerId: string]: number } = {};
+    private readonly defaultLiveCloudBaseUrl = 'https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run';
     private liveCloudBaseUrl = '';
     private liveCloudEventSeq = 0;
     private liveCloudPollElapsed = 0;
@@ -694,6 +695,7 @@ export class LevelManager extends Component {
                 console.warn('Live cloud localStorage read failed', e);
             }
         }
+        candidates.push(this.defaultLiveCloudBaseUrl);
         return candidates.map(v => String(v || '').trim()).find(v => !!v) || '';
     }
 

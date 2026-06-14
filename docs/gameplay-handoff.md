@@ -1,3 +1,38 @@
+## 2026-06-14 15:26 - Real Live Callback Reached Cloud, Client Default Cloud URL Fixed
+
+Status: Done / New debug package needs platform upload
+
+What changed:
+- Investigated the user's live-room report: the debug package can launch, but like/comment/gift had no in-game feedback.
+- Confirmed Douyin Cloud did receive real live/debug-room callbacks after launch: `live_like`, `live_comment`, and `live_gift` advanced the cloud queue past the earlier self-test events.
+- Root cause: the uploaded client only polled `/api/live/events` when `liveCloudUrl`, a global variable, or localStorage supplied the cloud URL. The official cloud-start package does not include the local preview query parameter, so polling did not start in the platform package.
+- Added the target JiZhanTuWei Douyin Cloud URL as the client-side default fallback while preserving query/global/localStorage overrides.
+- Refreshed `build/web-mobile`, synchronized it into the NW.js debug package, and generated a new incremented upload package: `release/douyin-debug/JiZhanTuWei_1.0.1.zip`.
+
+Files touched:
+- `assets/Game/Script/Common/LevelManager.ts`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=20`
+- `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
+- `Compress-Archive -LiteralPath release\douyin-debug\JiZhanTuWei_1.0.1 -DestinationPath release\douyin-debug\JiZhanTuWei_1.0.1.zip`
+
+Verification:
+- Deployed cloud diagnostics showed recent real-room callbacks after the user's live launch, so the callback side is working.
+- `http://127.0.0.1:8080/assets/Game/index.js?v=check` contains `1m3j5q7o3dezm`, proving the local preview server is serving the fixed build.
+- `release/douyin-debug/JiZhanTuWei_1.0.1.zip` contains `JiZhanTuWei_1.0.1\assets\Game\index.js`, and that file contains both `defaultLiveCloudBaseUrl` and the target cloud domain.
+- New package SHA256: `30B43C160C466A2A01458EF50CF97B0BF927962A37113CACCAD948AA036965D4`; size `220752249`.
+
+Risks / notes:
+- Chrome automation reached the `调试版本上传` dialog, but the platform file picker flow timed out in the automation layer. The new package has not been uploaded yet.
+- Current platform debug package is still the old `1.0.0_` until `JiZhanTuWei_1.0.1.zip` is uploaded and deployment reaches `部署完成`.
+
+Next step:
+- Upload `C:\projects\JiZhanTuWei_3.8.3ts\release\douyin-debug\JiZhanTuWei_1.0.1.zip` on the target APPID version page, enter version `1.0.1`, launch exe `JiZhanTuWei.exe`, keep cloud start `1080P / 9:16`, wait for `部署完成`, then relaunch the debug package and send real like/comment/gift again.
+
 ## 2026-06-14 15:05 - Preview Client Consumed Platform Self-Test Event
 
 Status: Done / Official live-room launch still pending
