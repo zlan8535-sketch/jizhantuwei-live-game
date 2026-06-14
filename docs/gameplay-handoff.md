@@ -1,3 +1,33 @@
+## 2026-06-14 18:48 - 1.0.5 Phone Live Validation Sheet
+
+Status: Done / Goal still needs phone live validation
+
+What changed:
+- Added a focused validation sheet for the deployed `1.0.5_` debug package.
+- Linked the validation sheet from the release checklist current status.
+- Rechecked cloud events after seq `11`; no new events have arrived yet, so the real phone/live companion validation is still pending.
+
+Files touched:
+- `docs/douyin-live-validation-1.0.5.md`
+- `docs/douyin-platform-release-checklist.md`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=11`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+
+Verification:
+- Cloud events after seq `11` returned `latestSeq=11 newCount=0`.
+- Diagnostics still show the last real room start at room `7651183074386561844`, before the `1.0.5_` phone-avatar retune.
+- The new sheet lists required checks for comment join, likes, four gift tiers, round avatar readability, and cloud evidence capture.
+
+Risks / notes:
+- This is documentation and validation workflow only; no client or cloud code changed.
+- Do not mark the goal complete until the `1.0.5_` package is relaunched in the real phone/live companion flow and the user accepts avatar size plus live feedback.
+
+Next step:
+- Run `docs/douyin-live-validation-1.0.5.md` during the next phone/live companion test.
+
 ## 2026-06-14 18:43 - Release Checklist Current Status Clarified
 
 Status: Done / Goal still needs phone live visual verification

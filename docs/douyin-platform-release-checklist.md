@@ -12,6 +12,7 @@
 - Live mechanics: comment, like, and gift callbacks are connected through the target Douyin Cloud service.
 - Latest client change: phone-oriented round viewer avatar sizing, normal `18px`, giant `22px`.
 - Remaining gate: relaunch `1.0.5_` from phone/live companion and visually verify avatar size plus comment/like/gift feedback in the real mobile stream view.
+- Validation sheet: `docs/douyin-live-validation-1.0.5.md`
 
 APPID: `tt02d6746b9cb2fc0e10`
 
