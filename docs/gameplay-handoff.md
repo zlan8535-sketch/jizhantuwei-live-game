@@ -1,3 +1,33 @@
+## 2026-06-14 18:40 - GitHub Publish After 1.0.5
+
+Status: Done / Goal still needs phone live visual verification
+
+What changed:
+- Published the `1.0.5` mobile avatar source changes to the correct project GitHub repository.
+- Confirmed the working tree before publish only contained `RoleLayer.ts` avatar sizing and the related handoff note.
+- Rechecked the target Douyin Cloud service health and event queue after the platform package deployment.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=10`
+- `git commit -m "Retune live avatars for mobile"`
+- `git push origin main`
+
+Verification:
+- Git remote is `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`.
+- Commit `ecb5add Retune live avatars for mobile` pushed `main` from `886d09a` to `ecb5add`.
+- Cloud health returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- Cloud events after seq `10` returned only seq `11`, the HTTP avatar preview gift used for local visual verification.
+
+Risks / notes:
+- The overall live-platform goal is still not complete until the deployed `1.0.5_` debug package is relaunched through phone/live companion and the avatar size is visually accepted in the real mobile stream view.
+
+Next step:
+- Ask the user to relaunch `1.0.5_` on phone/live companion and send at least one like/comment/gift to confirm live feedback plus avatar size in the real session.
+
 ## 2026-06-14 18:29 - Mobile Avatar Size 1.0.5
 
 Status: Done / Platform deployed / Needs phone visual verification
