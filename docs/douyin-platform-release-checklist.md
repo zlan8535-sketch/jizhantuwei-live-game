@@ -2,12 +2,14 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source exists locally, a dedicated JiZhanTuWei GitHub remote has been created, and the local cloud-service-to-client polling fallback has been verified. Douyin Cloud deployment, platform ability configuration, upload, and real live-room verification are not complete yet.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and real live-room verification are not complete yet.
 
 ## Current Package
 
 - Upload package: `release/douyin-debug/JiZhanTuWei_1.0.0.zip`
-- Package SHA256: `1E130DB891279F21FBCF0B9A33DC8B484D14EDD984A2A30A1D94BA941002FFFF`
+- Package SHA256: `178041DA9668A77C0966AEE817D97B856F00696F5692B98224B0576B390CAFF2`
+- Package size: `220752192`
+- Package refreshed: `2026-06-14 12:48:35`
 - Version to enter on platform: `1.0.0`
 - Launch exe to enter on platform: `JiZhanTuWei.exe`
 - Display ratio: `9:16`
@@ -60,6 +62,13 @@ Client bridge already exists:
 
 The bridge accepts `viewerId`, `userId`, `openId`, `secUid`, `nickName`, `avatarUrl`, `count`, `giftId`, `giftName`, `giftType`, and optional `soldierCount`.
 
+Current configured platform mapping as of 2026-06-14 13:47:
+
+- Development callback config: gift, comment, and like all use dev env `jztw-live-svc` path `/live_data_callback (jztw_live_data)`.
+- Comment ability config: keyword `加入`, description `加入战斗`.
+- Gift ability config: `仙女棒（1钻石）` -> 10 pistol soldiers, `能力药丸（10钻石）` -> 10 shotgun soldiers, `能量电池（99钻石）` -> 10 machine-gun soldiers, `超级空投（888钻石）` -> 10 giant soldiers.
+- Cloud callback normalization now emits `giftType` so the existing Cocos client bridge can route each configured gift tier without rebuilding the client package.
+
 Client cloud polling fallback:
 
 - Configure by URL query: `liveCloudUrl`, `jztwCloudUrl`, or `cloudUrl`.
@@ -84,7 +93,7 @@ Set-Location C:\projects\JiZhanTuWei_3.8.3ts\douyin-cloud-service
 & C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe smoke-test.js
 ```
 
-Result on 2026-06-13: `smoke test passed`.
+Result on 2026-06-14 after gift mapping update: `smoke test passed`.
 
 Git status:
 
@@ -92,15 +101,23 @@ Git status:
 - The accidental JiZhanTuWei commit in that old MRTGD repository was reverted with commit `a2f9670 Revert "Adapt cloud service for JiZhanTuWei app"`.
 - Dedicated JiZhanTuWei repository: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`
 - Initial pushed project commit: `8c42651 Initialize JiZhanTuWei live project`
-- This repository still needs to be selected in Douyin Cloud Git deployment for the target APPID flow.
+- Latest deployed commit: `83fc95c Map Douyin gifts to soldier types`
+- This repository is selected in Douyin Cloud Git deployment for APPID `tt02d6746b9cb2fc0e10`.
 
-Deployment status as of 2026-06-14 12:22:
+Deployment status as of 2026-06-14 13:47:
 
-- `GET https://1m3ly8e4e9hqe-env-WDdf2rOzyA.service.douyincloud.run/api/health` still returns `mrtgd-live-cloud-service`.
-- This service belongs to the old MRTGD app/service route and must not be treated as the JiZhanTuWei production deployment.
-- The cloud console showed a cost/arrears notice during publish attempts; deployment may require resolving billing/resource restrictions first.
+- Target env: `env-cuABsk2rKR`
+- Target service: `jztw-live-svc`
+- Target service id: `1m3j5q7o3dezm`
+- Release id: `427648`
+- Domain: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
+- `GET /api/health` returns `jizhantuwei-live-cloud-service`.
+- `POST /live_data_callback` accepted online gift tests for all four configured gift tiers.
+- Online callback responses returned expected `giftType` values: `pistol`, `shotgun`, `machine`, `giant`.
+- `GET /api/live/events?after=0` returned the normalized online test events.
+- The old MRTGD service URL `https://1m3ly8e4e9hqe-env-WDdf2rOzyA.service.douyincloud.run` must not be treated as the JiZhanTuWei deployment.
 
-The folder is ready to push to a Git repository and select in Douyin Cloud Git deployment, or deploy through `deploy-dycloud.ps1` once `dycloud` CLI is installed/authenticated.
+The root `Dockerfile` and `.dockerignore` exist so Douyin Cloud Git deployment can build the cloud service from the repository root while keeping the image context limited to `douyin-cloud-service/`.
 
 Expected cloud service responsibilities:
 
@@ -133,6 +150,8 @@ Prepared service files:
 - `douyin-cloud-service/Dockerfile`
 - `douyin-cloud-service/run.sh`
 - `douyin-cloud-service/deploy-dycloud.ps1`
+- root `Dockerfile`
+- root `.dockerignore`
 
 Do not treat local GM buttons or browser preview calls as real callback validation. Real validation requires launching through the official live/debug entry and receiving callbacks with real live-room context.
 
@@ -179,11 +198,12 @@ The goal is not complete until all gates pass:
 
 ## Current Blockers / Notes
 
-- Chrome became unstable on the upload drawer and showed a page-unresponsive dialog while trying to select the 220 MB zip.
+- Debug package upload is the main remaining blocker. The Open Platform upload drawer can be opened and fields can be filled, but the Chrome automation file chooser did not attach `C:\projects\JiZhanTuWei_3.8.3ts\release\douyin-debug\JiZhanTuWei_1.0.0.zip`.
+- A fresh version-management tab was usable, so the issue is specific to file selection/upload, not the APPID page or login state.
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.
 - Dedicated GitHub remote now exists: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`.
 - GitHub CLI `gh` is not installed; repository creation was completed through the logged-in Chrome GitHub session.
-- Douyin Cloud has not yet been switched from the old MRTGD repo/service route to the dedicated JiZhanTuWei repository.
+- Douyin Cloud has been switched to the dedicated JiZhanTuWei repository for service `1m3j5q7o3dezm`.
 - The Open Platform target app page currently shows `testlevel002` / APPID `tt02d6746b9cb2fc0e10` at step `3 开发玩法&提审`; `申请能力`, `开发玩法`, and `提交审核` are still part of the remaining platform flow.

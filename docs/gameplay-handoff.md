@@ -1,3 +1,79 @@
+## 2026-06-14 13:47 - Platform Ability Config And Gift Mapping Verified
+
+Status: Partial / Package upload still blocked by Chrome file chooser
+
+What changed:
+- Configured Open Platform live data development callbacks for APPID `tt02d6746b9cb2fc0e10`: gift, comment, and like all point to Douyin Cloud service `jztw-live-svc` callback path `/live_data_callback`.
+- Added Douyin Cloud callback path `jztw_live_data` -> `/live_data_callback` for service `1m3j5q7o3dezm`.
+- Configured platform gift ability with 4 existing platform gifts: `仙女棒(1)` -> normal soldiers, `能力药丸(10)` -> shotgun soldiers, `能量电池(99)` -> machine-gun soldiers, `超级空投(888)` -> giant soldiers.
+- Configured platform comment ability with keyword `加入`, description `加入战斗`.
+- Updated `douyin-cloud-service/server.js` so normalized cloud gift callbacks include `giftType` (`pistol`, `shotgun`, `machine`, `giant`) before the Cocos client polls `/api/live/events`.
+- Published Douyin Cloud release `427648` from GitHub repo `zlan8535-sketch/jizhantuwei-live-game`, branch `main`, commit `83fc95c`.
+
+Files touched:
+- `douyin-cloud-service/server.js`
+- `douyin-cloud-service/smoke-test.js`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `node smoke-test.js` with bundled Node runtime
+- `git push origin main`
+- `POST https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/live_data_callback`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+
+Verification:
+- Local cloud smoke test passed.
+- Douyin Cloud release `427648` reached status `成功`.
+- Deployed `/api/health` still returns `jizhantuwei-live-cloud-service`.
+- Online gift callback tests returned expected mappings: `pistol`, `shotgun`, `machine`, `giant`.
+- The correct repo remains `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`; do not use the old MRTGD repo/service.
+
+Risks / notes:
+- Debug package upload is still not complete. Chrome's file upload flow did not open a usable file chooser for `release/douyin-debug/JiZhanTuWei_1.0.0.zip`; a fresh platform tab worked for normal page control, but file selection still did not attach the zip.
+- Platform config changes say they are bound to a new package upload, so this remains the main blocking item before official debug/live validation.
+- Real live-room validation is still not proven until the package launches through the official debug/live entry and receives real `roomId` callbacks.
+
+Next step:
+- Complete debug package upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`, then wait for platform cloud deployment and validate real comment/like/gift callbacks from a live/debug room.
+
+## 2026-06-14 13:16 - Douyin Cloud Git Deploy Verified
+
+Status: Done / Needs platform ability and package upload verification
+
+What changed:
+- Created the target APPID Douyin Cloud service `jztw-live-svc` in env `env-cuABsk2rKR`.
+- Added root `Dockerfile` and `.dockerignore` so Douyin Cloud can build only `douyin-cloud-service/` from the dedicated repository root.
+- Published the cloud service through Git deployment from `https://github.com/zlan8535-sketch/jizhantuwei-live-game`, branch `main`, commit `6dff1af`.
+- Repacked the debug package with the latest live cloud polling build.
+
+Files touched:
+- `Dockerfile`
+- `.dockerignore`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `git push origin main`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `POST https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/live_data_callback`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+
+Verification:
+- Douyin Cloud release id `427642` reached status `成功`.
+- Deployed domain: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`.
+- `/api/health` returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- `/live_data_callback` accepted a test `live_comment`.
+- `/api/live/events?after=0` returned the normalized test event.
+- Debug package: `release/douyin-debug/JiZhanTuWei_1.0.0.zip`, SHA256 `178041DA9668A77C0966AEE817D97B856F00696F5692B98224B0576B390CAFF2`, size `220752192`.
+
+Risks / notes:
+- This proves the deployed cloud callback service and polling event endpoint. It still does not prove real Douyin live-room callbacks until the app is launched through the official debug/live entry with real `roomId`.
+- Do not use old MRTGD service/app ids. Current APPID is `tt02d6746b9cb2fc0e10`, env is `env-cuABsk2rKR`, service id is `1m3j5q7o3dezm`.
+
+Next step:
+- Configure platform comment/like/gift abilities and callback paths for APPID `tt02d6746b9cb2fc0e10`, upload the refreshed debug package, then verify real platform callbacks reach `/live_data_callback` and the game client polling bridge.
+
 ## 2026-06-14 12:43 - Local Cloud Event Polling Verified
 
 Status: Done / Needs deployed cloud verification
