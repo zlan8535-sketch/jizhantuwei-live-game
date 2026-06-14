@@ -253,6 +253,9 @@ function normalizeEventType(body, data, gift) {
 
 const PLATFORM_GIFT_ID_TO_SOLDIER_TYPE = new Map([
   ["n1/Dg1905sj1FyoBlQBvmbaDZFBNaKuKZH6zxHkv8Lg5x2cRfrKUTb8gzMs=", "pistol"],
+  ["eplFUy7i0B0fiv0Iym1MpOZa5XmUE8g/WUAyJ6Tc+UJJDpcs7pzclNOz/WM=", "shotgun"],
+  ["4I66OIE1HKWfM7PNvAHtAgYUSNlggSEgcpo3ai8GYQXAWqjrDuH8NtjsWEQ=", "machine"],
+  ["gs+95ujNzXXSCtLTv97fWgbApTQi0sqz1BULB+7w62g+v4sFxINvxOIrXCw=", "giant"],
   ["28rYzVFNyXEXFC8HI+f/WG+I7a6lfl3OyZZjUS+CVuwCgYZrPrUdytGHu0c=", "shotgun"],
   ["IkkadLfz7O/a5UR45p/OOCCG6ewAWVbsuzR/Z+v1v76CBU+mTG/wPjqdpfg=", "machine"],
   ["lsEGaeC++k/yZbzTU2ST64EukfpPENQmqEZxaK9v1+7etK+qnCRKOnDyjsE=", "giant"]

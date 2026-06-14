@@ -185,6 +185,36 @@ async function main() {
       assert.equal(colorFairyStickGift.body.data.giftType, giftType);
     }
 
+    const platformColorFairyStickGifts = [
+      ["platform-blue-stick", "eplFUy7i0B0fiv0Iym1MpOZa5XmUE8g/WUAyJ6Tc+UJJDpcs7pzclNOz/WM=", "shotgun"],
+      ["platform-purple-stick", "4I66OIE1HKWfM7PNvAHtAgYUSNlggSEgcpo3ai8GYQXAWqjrDuH8NtjsWEQ=", "machine"],
+      ["platform-yellow-stick", "gs+95ujNzXXSCtLTv97fWgbApTQi0sqz1BULB+7w62g+v4sFxINvxOIrXCw=", "giant"]
+    ];
+    for (const [msgId, giftId, giftType] of platformColorFairyStickGifts) {
+      const platformColorFairyStickGift = await request("/live_data_callback", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-room-id": "room-platform-color-gift",
+          "x-tt-appid": APP_ID
+        },
+        body: JSON.stringify([
+          {
+            msg_id: msgId,
+            sec_openid: "platform-color-openid",
+            sec_gift_id: giftId,
+            gift_num: 1,
+            gift_value: 10,
+            nickname: "platform-color-user",
+            timestamp: Date.now()
+          }
+        ])
+      });
+      assert.equal(platformColorFairyStickGift.response.status, 200);
+      assert.equal(platformColorFairyStickGift.body.data.msgType, "live_gift");
+      assert.equal(platformColorFairyStickGift.body.data.giftType, giftType);
+    }
+
     const unknownCheapGift = await request("/live_data_callback", {
       method: "POST",
       headers: {
@@ -262,17 +292,20 @@ async function main() {
 
     const state = await request("/api/live/state");
     assert.equal(state.body.data.counters.live_comment, 2);
-    assert.equal(state.body.data.counters.live_gift, 10);
+    assert.equal(state.body.data.counters.live_gift, 13);
     assert.equal(state.body.data.counters.live_user_enter, 2);
     assert.equal(state.body.data.counters.unknown, 0);
 
     const events = await request("/api/live/events?after=0");
     assert.equal(events.response.status, 200);
-    assert.ok(events.body.data.latestSeq >= 14);
+    assert.ok(events.body.data.latestSeq >= 17);
     assert.deepEqual(
       events.body.data.events.map(event => event.msgType),
       [
         "live_comment",
+        "live_gift",
+        "live_gift",
+        "live_gift",
         "live_gift",
         "live_gift",
         "live_gift",
