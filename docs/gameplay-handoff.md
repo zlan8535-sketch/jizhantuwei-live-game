@@ -1,3 +1,61 @@
+## 2026-06-14 15:58 - Debug Package 1.0.1 Deployment Complete
+
+Status: Done / Real live-room feedback needs verification
+
+What changed:
+- Continued polling the target APPID version page after the user uploaded the fixed package.
+- Confirmed the Open Platform debug package status changed from `部署中` to `部署完成`.
+- The active debug package is now `1.0.1_`.
+- Cloud start remains enabled with `1080P` resolution and `9:16` display ratio.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- Chrome refresh on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+
+Verification:
+- Platform page shows debug package `1.0.1_`.
+- Platform page shows status `部署完成`.
+- Platform page still shows cloud start enabled: `1080P / 9:16`.
+
+Risks / notes:
+- The next validation must launch the debug package again from the official live/debug entry. The already-running old session may still be the old package until relaunched.
+- Real comment, like, and gift in-game feedback remains unverified after the `1.0.1_` deployment.
+
+Next step:
+- Relaunch `testlevel002-调试包` from the live/debug entry, send real comment `加入`, send likes, and send one mapped gift. Then confirm the gameplay shows join/like/gift soldier feedback and the cloud diagnostics receive new events.
+
+## 2026-06-14 15:55 - Debug Package 1.0.1 Uploaded, Platform Deploying
+
+Status: Done / Superseded by deployment-complete check
+
+What changed:
+- The user completed the Open Platform debug package upload for the fixed package.
+- Refreshed the target APPID version page and confirmed the debug package now shows version `1.0.1_`.
+- The Open Platform status is currently `部署中`.
+- Cloud start remains enabled with `1080P` resolution and `9:16` display ratio.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- Chrome refresh on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+
+Verification:
+- Platform page shows debug package `1.0.1_`.
+- Platform page shows status `部署中`.
+- Platform page still shows cloud start enabled: `1080P / 9:16`.
+
+Risks / notes:
+- The package is uploaded but not yet ready for live/debug-room validation until the status becomes `部署完成`.
+- The prior real-room callback issue is still expected to be fixed by this package, because `1.0.1` includes the default Douyin Cloud URL fallback.
+
+Next step:
+- Keep polling the version page until `1.0.1_` reaches `部署完成`, then relaunch the debug package from the live/debug entry and verify real comment, like, and gift feedback in the gameplay.
+
 ## 2026-06-14 15:26 - Real Live Callback Reached Cloud, Client Default Cloud URL Fixed
 
 Status: Done / New debug package needs platform upload
