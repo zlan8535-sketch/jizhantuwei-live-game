@@ -1,3 +1,37 @@
+## 2026-06-14 22:09 - 1.0.7 Startup Network Error Check
+
+Status: Done / User should retry after deployment completed
+
+What changed:
+- Rechecked the Open Platform version page after the user reported `网络错误 / 启动失败`.
+- Confirmed debug package `1.0.7_` now shows `部署完成` on the version page.
+- Checked the target Douyin Cloud service and callback diagnostics.
+- Locally launched `release/douyin-debug/JiZhanTuWei_1.0.7/JiZhanTuWei.exe` as a basic package-start smoke test.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+- Chrome refresh of `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- `Start-Process release\douyin-debug\JiZhanTuWei_1.0.7\JiZhanTuWei.exe -WindowStyle Hidden`
+
+Verification:
+- Open Platform version page shows `调试版本 / 部署完成`, package `1.0.7_`, submitted `2026-06-14 21:47:21`, cloud start `1080P / 9:16`.
+- Cloud health returns `jizhantuwei-live-cloud-service`.
+- Cloud diagnostics have no new `/start_game` record after the user's failed start, which means the failure likely happened before the game reached the JiZhanTuWei cloud callback layer.
+- The local `1.0.7` exe process stayed alive for 8 seconds and was then stopped manually; this confirms the package has a valid startup exe and is not immediately crashing locally.
+
+Risks / notes:
+- The most likely cause of the reported network/startup error is that the user tried to open the debug package while `1.0.7_` was still `部署中`.
+- If the same error persists after `1.0.7_` shows `部署完成`, investigate platform-side cloud-start logs or try reuploading from the same package. The current evidence does not point to a broken local package structure or a dead Douyin Cloud service.
+
+Next step:
+- Retry opening `1.0.7_` from phone/live companion now that the version page shows deployed. If it still reports network/startup failure, capture the exact platform error time and inspect platform deployment/startup logs around that timestamp.
+
 ## 2026-06-14 21:54 - Colored Fairy Stick Platform Config And 1.0.7 Upload
 
 Status: Partial / Platform package uploaded, deployment still polling

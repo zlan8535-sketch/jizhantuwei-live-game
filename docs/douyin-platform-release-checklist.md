@@ -4,6 +4,7 @@
 
 - APPID: `tt02d6746b9cb2fc0e10`
 - Current debug package: `1.0.7_`
+- Platform status update: `1.0.7_` was refreshed and confirmed `部署完成` on 2026-06-14 22:09.
 - Platform status: uploaded on 2026-06-14 21:47:21, still `部署中` as of the latest poll; previous `1.0.6_` package was deployed on 2026-06-14 19:16:41
 - Upload package: `release/douyin-debug/JiZhanTuWei_1.0.7.zip`
 - Package SHA256: `FA701378C0C273C88A3D485166D12AB8C3AA9CA615C37EB037353E44F89B5A11`
@@ -16,6 +17,7 @@
 - Gift ability config: saved as four 1-diamond fairy-stick variants: `仙女棒`, `蓝色仙女棒`, `紫色仙女棒`, `黄色仙女棒`.
 - Remaining gate: wait for `1.0.7_` to reach `部署完成`, then relaunch/continue the phone live flow and verify real comment, like, all four low-price gifts, and avatar feedback in the mobile stream view.
 - Validation sheet: `docs/douyin-live-validation-1.0.7.md`
+- Current next gate: launch `1.0.7_` again from phone/live companion now that deployment is complete; if startup still fails, inspect platform cloud-start logs because local package startup and Douyin Cloud health both pass.
 
 APPID: `tt02d6746b9cb2fc0e10`
 
