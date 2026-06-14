@@ -93,6 +93,39 @@ async function main() {
     assert.equal(platformGift.body.data.giftType, "giant");
     assert.equal(platformGift.body.data.roomId, "room-header");
 
+    const platformSelfTestGifts = [
+      ["self-test-pistol", "n1/Dg1905sj1FyoBlQBvmbaDZFBNaKuKZH6zxHkv8Lg5x2cRfrKUTb8gzMs=", 10, "pistol"],
+      ["self-test-shotgun", "28rYzVFNyXEXFC8HI+f/WG+I7a6lfl3OyZZjUS+CVuwCgYZrPrUdytGHu0c=", 100, "shotgun"],
+      ["self-test-machine", "IkkadLfz7O/a5UR45p/OOCCG6ewAWVbsuzR/Z+v1v76CBU+mTG/wPjqdpfg=", 990, "machine"],
+      ["self-test-giant", "lsEGaeC++k/yZbzTU2ST64EukfpPENQmqEZxaK9v1+7etK+qnCRKOnDyjsE=", 8880, "giant"]
+    ];
+    for (const [msgId, giftId, giftValue, giftType] of platformSelfTestGifts) {
+      const platformSelfTestGift = await request("/live_data_callback", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-room-id": "room-platform-self-test",
+          "x-tt-appid": APP_ID
+        },
+        body: JSON.stringify([
+          {
+            msg_id: msgId,
+            sec_openid: "platform-self-test-openid",
+            sec_gift_id: giftId,
+            gift_num: 1,
+            gift_value: giftValue,
+            nickname: "platform-self-test-user",
+            timestamp: Date.now(),
+            test: true
+          }
+        ])
+      });
+      assert.equal(platformSelfTestGift.response.status, 200);
+      assert.equal(platformSelfTestGift.body.data.msgType, "live_gift");
+      assert.equal(platformSelfTestGift.body.data.giftType, giftType);
+      assert.equal(platformSelfTestGift.body.data.roomId, "room-platform-self-test");
+    }
+
     const platformViewerEnter = await request("/live_data_callback", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -147,16 +180,26 @@ async function main() {
 
     const state = await request("/api/live/state");
     assert.equal(state.body.data.counters.live_comment, 2);
-    assert.equal(state.body.data.counters.live_gift, 1);
+    assert.equal(state.body.data.counters.live_gift, 5);
     assert.equal(state.body.data.counters.live_user_enter, 2);
     assert.equal(state.body.data.counters.unknown, 0);
 
     const events = await request("/api/live/events?after=0");
     assert.equal(events.response.status, 200);
-    assert.ok(events.body.data.latestSeq >= 3);
+    assert.ok(events.body.data.latestSeq >= 9);
     assert.deepEqual(
       events.body.data.events.map(event => event.msgType),
-      ["live_comment", "live_gift", "live_user_enter", "live_user_enter", "live_comment"]
+      [
+        "live_comment",
+        "live_gift",
+        "live_gift",
+        "live_gift",
+        "live_gift",
+        "live_gift",
+        "live_user_enter",
+        "live_user_enter",
+        "live_comment"
+      ]
     );
 
     console.log("smoke test passed");

@@ -251,7 +251,17 @@ function normalizeEventType(body, data, gift) {
   return "unknown";
 }
 
+const PLATFORM_GIFT_ID_TO_SOLDIER_TYPE = new Map([
+  ["n1/Dg1905sj1FyoBlQBvmbaDZFBNaKuKZH6zxHkv8Lg5x2cRfrKUTb8gzMs=", "pistol"],
+  ["28rYzVFNyXEXFC8HI+f/WG+I7a6lfl3OyZZjUS+CVuwCgYZrPrUdytGHu0c=", "shotgun"],
+  ["IkkadLfz7O/a5UR45p/OOCCG6ewAWVbsuzR/Z+v1v76CBU+mTG/wPjqdpfg=", "machine"],
+  ["lsEGaeC++k/yZbzTU2ST64EukfpPENQmqEZxaK9v1+7etK+qnCRKOnDyjsE=", "giant"]
+]);
+
 function mapGiftSoldierType(giftName, giftId, giftValue) {
+  const knownGiftType = PLATFORM_GIFT_ID_TO_SOLDIER_TYPE.get(String(giftId || ""));
+  if (knownGiftType) return knownGiftType;
+
   const key = `${giftName || ""} ${giftId || ""}`.toLowerCase();
   const value = Number(giftValue || 0);
 
