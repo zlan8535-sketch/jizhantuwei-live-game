@@ -1,0 +1,7 @@
+*
+!Dockerfile
+!.dockerignore
+!douyin-cloud-service/
+!douyin-cloud-service/package.json
+!douyin-cloud-service/server.js
+!douyin-cloud-service/run.sh
