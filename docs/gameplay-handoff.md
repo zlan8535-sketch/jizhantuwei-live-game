@@ -1,3 +1,33 @@
+## 2026-06-14 17:25 - Viewer Avatar Size Tightened
+
+Status: Done / Local preview refreshed
+
+What changed:
+- Reduced viewer soldier head avatar size so it fits the round soldier head better.
+- Normal viewer avatars now use `8px`, giant viewer avatars use `11px`, with a smaller circular fallback background.
+- Kept the existing circular `Mask.Type.GRAPHICS_ELLIPSE` clipping path for remote live avatars.
+
+Files touched:
+- `assets/Game/Script/Custom/RoleLayer.ts`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
+- Opened local preview at `http://127.0.0.1:8080/index.html?v=1781428623012`
+- Posted one `live_gift` cloud callback with `avatarUrl` for avatar-chain verification.
+
+Verification:
+- Web Mobile build completed successfully.
+- Local preview loaded and connected to the target Douyin Cloud service.
+- Cloud event seq `2` contains `avatarUrl=https://avatars.githubusercontent.com/u/9919?s=64&v=4`.
+
+Risks / notes:
+- In-app screenshot capture timed out on the WebGL canvas, so final visual QA should be done from the visible browser preview.
+- This is a client visual-only change; no combat, gift, reserve, or cloud logic was changed.
+
+Next step:
+- If the visible preview looks correct, package/upload the next debug build so platform live preview uses the smaller round avatars.
+
 ## 2026-06-14 17:06 - Debug Package 1.0.2 Uploaded And Cloud Republished
 
 Status: Done / Needs real live-room relaunch validation
