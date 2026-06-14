@@ -2,7 +2,7 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-Latest platform self-test status: on 2026-06-14 14:44, the Open Platform self-test tool successfully pushed all four configured gift callbacks through Douyin Cloud release `427674`; `/api/live/events` returned `pistol`, `shotgun`, `machine`, and `giant`. Real live-room validation is still pending because these self-test callbacks are marked `test: true`.
+Latest platform self-test status: on 2026-06-14 14:53, the Open Platform self-test tool successfully pushed all four configured gift callbacks, one comment callback, and one like callback through Douyin Cloud release `427674`; `/api/live/events` returned `pistol`, `shotgun`, `machine`, `giant`, `live_comment`, and `live_like`. Real live-room validation is still pending because these self-test callbacks are marked `test: true`.
 
 This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and debug-package cloud deployment are complete, and platform self-test gift callbacks have reached the target cloud service. Real live-room verification is still pending because self-test callbacks are not the same as a full official live/debug-room launch.
 
@@ -114,10 +114,11 @@ Deployment status as of 2026-06-14 14:44:
 - Release id: `427674`
 - Domain: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
 - `GET /api/health` returns `jizhantuwei-live-cloud-service`.
-- Open Platform self-test push path is configured to `jztw-live-svc` path `/live_data_callback (jztw_live_data)`.
-- Platform self-test pushed all four configured gift tiers successfully through Douyin Cloud.
-- `GET /api/live/events?after=0` returned `latestSeq: 4` with `source: douyin-platform, internal-callback` and `callbackPath: /live_data_callback`.
+- Open Platform self-test push path is configured to `jztw-live-svc` path `/live_data_callback (jztw_live_data)` for gift, comment, and like tabs.
+- Platform self-test pushed all four configured gift tiers, comment `加入`, and like count `10` successfully through Douyin Cloud.
+- `GET /api/live/events?after=0` returned `latestSeq: 6` with `source: douyin-platform, internal-callback` and `callbackPath: /live_data_callback`.
 - Platform self-test callbacks returned expected `giftType` values: `仙女棒 -> pistol`, `能力药丸 -> shotgun`, `能量电池 -> machine`, `超级空投 -> giant`.
+- Platform self-test callbacks also returned `live_comment` with `comment: 加入` and `live_like` with `count: 10`.
 - The cloud-service mapping now uses platform gift ids first, because self-test payloads may send the encrypted `sec_gift_id` without a Chinese gift name.
 - The old MRTGD service URL `https://1m3ly8e4e9hqe-env-WDdf2rOzyA.service.douyincloud.run` must not be treated as the JiZhanTuWei deployment.
 

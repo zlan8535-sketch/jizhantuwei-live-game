@@ -7,6 +7,8 @@ What changed:
 - Added the four self-test platform gift ids to `douyin-cloud-service/server.js` so platform payloads that omit Chinese gift names still map deterministically.
 - Published Douyin Cloud release `427674` from GitHub repo `zlan8535-sketch/jizhantuwei-live-game`, branch `main`, commit `a0b468f5216181eb84217e8af241c4eb3e70231c`.
 - Used the platform self-test tool with role `11` to push four gift callbacks: `仙女棒`, `能力药丸`, `能量电池`, and `超级空投`.
+- Added platform self-test config for comment and like tabs, both pointing to Douyin Cloud service `jztw-live-svc`, path `/live_data_callback (jztw_live_data)`.
+- Pushed comment self-test content `加入` and like self-test count `10`.
 
 Files touched:
 - `douyin-cloud-service/server.js`
@@ -28,8 +30,10 @@ Verification:
 - Douyin Cloud release `427674` reached status `成功`; the build log locked commit `a0b468f5216181eb84217e8af241c4eb3e70231c`.
 - `/api/health` returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
 - Platform self-test returned `推送成功` for all four gift rows.
-- Cloud event queue returned `latestSeq: 4`; all four callbacks arrived from `source: douyin-platform, internal-callback` with `callbackPath: /live_data_callback`.
+- Cloud event queue returned `latestSeq: 6`; all six callbacks arrived from `source: douyin-platform, internal-callback` with `callbackPath: /live_data_callback`.
 - Self-test gift mappings are now correct: `仙女棒 -> pistol`, `能力药丸 -> shotgun`, `能量电池 -> machine`, `超级空投 -> giant`.
+- Self-test comment arrived as `live_comment` with `comment: 加入`.
+- Self-test like arrived as `live_like` with `count: 10`.
 
 Risks / notes:
 - This proves the Open Platform self-test callback path to Douyin Cloud and the cloud event queue. It still is not the final real live-room validation because the events are marked `test: true`.
