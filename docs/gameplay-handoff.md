@@ -1,3 +1,40 @@
+## 2026-06-14 14:17 - Debug Package Deployed, Test Member Missing
+
+Status: Partial / Waiting for a real Douyin debug member and live-room launch
+
+What changed:
+- Rechecked the target Open Platform page for APPID `tt02d6746b9cb2fc0e10`; the debug package now shows `部署完成`.
+- Confirmed package metadata on the page: submit time `2026-06-14 14:01:57`, package version `1.0.0_`, cloud start enabled, resolution `1080P`, display ratio `9:16`.
+- Opened `开播测试账号`; the test member table currently shows `暂无数据`.
+- Opened the add-member dialog only to inspect it. The platform requires scanning a QR code with the real Douyin account that should become the debug live account.
+- Rechecked cloud service health and diagnostics. Health is good, but diagnostics still only contain prior HTTP smoke-test callbacks using `room-codex-verify`; no real platform live-room `roomId` has been proven yet.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- Chrome read-only check of `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- Chrome read-only check of `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/test_account_config`
+- `Invoke-WebRequest -UseBasicParsing 'https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health'`
+- `Invoke-WebRequest -UseBasicParsing 'https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics'`
+- `Invoke-WebRequest -UseBasicParsing 'http://127.0.0.1:8080/index.html?v=1781266680000&liveCloudUrl=https%3A%2F%2F1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run'`
+
+Verification:
+- Debug package deployment is complete on the target APPID page.
+- Test member list is empty.
+- Add-member flow requires a real Douyin App QR scan; no member was added by Codex.
+- Cloud `/api/health` returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- Local preview URL returned HTTP `200`.
+
+Risks / notes:
+- Do not treat the prior `room-codex-verify` callback diagnostics as real platform validation. They are HTTP smoke tests, not official live/debug-room callbacks.
+- The remaining gate is human/platform-side: bind a real Douyin debug member, set that account private if required by the platform guide, launch the debug package through Live Companion or the Douyin live room interaction panel, then send real comment/like/gift events.
+- Do not use old MRTGD APPID `ttd2d6a46b4cb22c0b10`, service `1m3ly8e4e9hqe`, or repo `mrtgd-douyin-cloud-service`.
+
+Next step:
+- Have the real Douyin debug account scan the QR code in `开播测试账号`, then launch `testlevel002-调试包` from the official live/debug entry and verify real `roomId`, comment, like, and gift callbacks.
+
 ## 2026-06-14 14:04 - Debug Package Uploaded To Open Platform
 
 Status: Partial / Waiting for platform cloud deployment

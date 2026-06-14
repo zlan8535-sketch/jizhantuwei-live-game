@@ -2,7 +2,7 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and real live-room verification are not complete yet.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and debug-package cloud deployment are complete. Real live-room verification is still pending because no `开播测试账号` member is bound yet.
 
 ## Current Package
 
@@ -175,9 +175,9 @@ After upload:
 
 - Upload completed on 2026-06-14 14:04.
 - The platform showed `调试版本上传成功`.
-- Debug version list shows `1.0.0_` with status `部署中`.
-- Wait for cloud deployment to finish. The platform text says this can take about 30 minutes.
-- Add/configure a debug member account if needed.
+- Debug version list shows `1.0.0_`; recheck on 2026-06-14 14:17 shows status `部署完成`.
+- Add/configure a debug member account. The `开播测试账号` page currently shows `暂无数据`.
+- The add-member flow requires scanning a QR code with the real Douyin account that should become the debug live account.
 - Open the debug package through live companion or the official live/debug entry.
 
 ## Verification Gates
@@ -192,7 +192,7 @@ The goal is not complete until all gates pass:
 - The client delivery path is implemented and locally verified: local callback -> cloud service -> `/api/live/events` -> gameplay client -> `__JZTW_LIVE__`.
 - The deployed client delivery path is verified with a real platform callback: official live/debug entry -> Douyin Cloud `/live_data_callback` -> `/api/live/events` -> gameplay client.
 - Debug package upload succeeds on the Douyin Open Platform. Done on 2026-06-14 14:04.
-- Cloud deployment succeeds. Pending: version page currently shows `部署中`.
+- Cloud deployment succeeds. Done: version page shows `部署完成`.
 - Official launch provides real live-room context.
 - Real comment callback spawns a viewer soldier.
 - Real like callback spawns a soldier after the configured threshold.
@@ -202,7 +202,9 @@ The goal is not complete until all gates pass:
 ## Current Blockers / Notes
 
 - Debug package upload is no longer blocked. The Chrome upload flow succeeded by targeting the inner `选择文件` control.
-- Current blocker is platform cloud deployment time: debug version `1.0.0_` is visible with status `部署中`.
+- Current blocker is platform debug-member binding: the `开播测试账号` page shows `暂无数据`.
+- Adding a debug member requires the real Douyin account to scan the QR code shown by the Open Platform.
+- Current cloud diagnostics still only contain HTTP smoke-test callbacks using `room-codex-verify`; this is not real live-room validation.
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.
