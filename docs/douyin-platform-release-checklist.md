@@ -2,7 +2,9 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and debug-package cloud deployment are complete. Real live-room verification is still pending because no `开播测试账号` member is bound yet.
+Latest platform self-test status: on 2026-06-14 14:44, the Open Platform self-test tool successfully pushed all four configured gift callbacks through Douyin Cloud release `427674`; `/api/live/events` returned `pistol`, `shotgun`, `machine`, and `giant`. Real live-room validation is still pending because these self-test callbacks are marked `test: true`.
+
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, and the local plus deployed cloud-service-to-client polling path has been verified. Platform comment/gift/like data callbacks and comment/gift ability configuration are now configured for the target APPID. Debug package upload and debug-package cloud deployment are complete, and platform self-test gift callbacks have reached the target cloud service. Real live-room verification is still pending because self-test callbacks are not the same as a full official live/debug-room launch.
 
 ## Current Package
 
@@ -101,20 +103,22 @@ Git status:
 - The accidental JiZhanTuWei commit in that old MRTGD repository was reverted with commit `a2f9670 Revert "Adapt cloud service for JiZhanTuWei app"`.
 - Dedicated JiZhanTuWei repository: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`
 - Initial pushed project commit: `8c42651 Initialize JiZhanTuWei live project`
-- Latest deployed commit: `83fc95c Map Douyin gifts to soldier types`
+- Latest deployed commit: `a0b468f Map Douyin self-test gift ids`
 - This repository is selected in Douyin Cloud Git deployment for APPID `tt02d6746b9cb2fc0e10`.
 
-Deployment status as of 2026-06-14 13:47:
+Deployment status as of 2026-06-14 14:44:
 
 - Target env: `env-cuABsk2rKR`
 - Target service: `jztw-live-svc`
 - Target service id: `1m3j5q7o3dezm`
-- Release id: `427648`
+- Release id: `427674`
 - Domain: `https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run`
 - `GET /api/health` returns `jizhantuwei-live-cloud-service`.
-- `POST /live_data_callback` accepted online gift tests for all four configured gift tiers.
-- Online callback responses returned expected `giftType` values: `pistol`, `shotgun`, `machine`, `giant`.
-- `GET /api/live/events?after=0` returned the normalized online test events.
+- Open Platform self-test push path is configured to `jztw-live-svc` path `/live_data_callback (jztw_live_data)`.
+- Platform self-test pushed all four configured gift tiers successfully through Douyin Cloud.
+- `GET /api/live/events?after=0` returned `latestSeq: 4` with `source: douyin-platform, internal-callback` and `callbackPath: /live_data_callback`.
+- Platform self-test callbacks returned expected `giftType` values: `仙女棒 -> pistol`, `能力药丸 -> shotgun`, `能量电池 -> machine`, `超级空投 -> giant`.
+- The cloud-service mapping now uses platform gift ids first, because self-test payloads may send the encrypted `sec_gift_id` without a Chinese gift name.
 - The old MRTGD service URL `https://1m3ly8e4e9hqe-env-WDdf2rOzyA.service.douyincloud.run` must not be treated as the JiZhanTuWei deployment.
 
 The root `Dockerfile` and `.dockerignore` exist so Douyin Cloud Git deployment can build the cloud service from the repository root while keeping the image context limited to `douyin-cloud-service/`.
@@ -176,7 +180,7 @@ After upload:
 - Upload completed on 2026-06-14 14:04.
 - The platform showed `调试版本上传成功`.
 - Debug version list shows `1.0.0_`; recheck on 2026-06-14 14:17 shows status `部署完成`.
-- Add/configure a debug member account. The `开播测试账号` page currently shows `暂无数据`.
+- Use the added test/debug account to open the debug package through live companion or the official live/debug entry.
 - The add-member flow requires scanning a QR code with the real Douyin account that should become the debug live account.
 - Open the debug package through live companion or the official live/debug entry.
 
@@ -190,6 +194,7 @@ The goal is not complete until all gates pass:
 - Douyin Cloud Git publish/deploy is complete for the service used by this APPID.
 - The deployed `/api/health` returns `jizhantuwei-live-cloud-service`, not `mrtgd-live-cloud-service`.
 - The client delivery path is implemented and locally verified: local callback -> cloud service -> `/api/live/events` -> gameplay client -> `__JZTW_LIVE__`.
+- Open Platform self-test is verified: platform self-test tool -> Douyin Cloud `/live_data_callback` -> `/api/live/events`.
 - The deployed client delivery path is verified with a real platform callback: official live/debug entry -> Douyin Cloud `/live_data_callback` -> `/api/live/events` -> gameplay client.
 - Debug package upload succeeds on the Douyin Open Platform. Done on 2026-06-14 14:04.
 - Cloud deployment succeeds. Done: version page shows `部署完成`.
@@ -202,9 +207,9 @@ The goal is not complete until all gates pass:
 ## Current Blockers / Notes
 
 - Debug package upload is no longer blocked. The Chrome upload flow succeeded by targeting the inner `选择文件` control.
-- Current blocker is platform debug-member binding: the `开播测试账号` page shows `暂无数据`.
-- Adding a debug member requires the real Douyin account to scan the QR code shown by the Open Platform.
-- Current cloud diagnostics still only contain HTTP smoke-test callbacks using `room-codex-verify`; this is not real live-room validation.
+- The platform self-test role is available and gift self-test callbacks reached the target cloud service.
+- Remaining blocker is official live/debug-room validation: launch the debug package with the added test account, then send real comment, like, and gift events.
+- Current cloud diagnostics now contain platform self-test callbacks, not only HTTP smoke-test callbacks. They are still not real live-room validation because the raw events include `test: true`.
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.

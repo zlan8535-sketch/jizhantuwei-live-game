@@ -1,3 +1,44 @@
+## 2026-06-14 14:44 - Open Platform Self-Test Gift Callbacks Verified
+
+Status: Done / Still needs official live-room launch validation
+
+What changed:
+- Configured the Open Platform `openAPI自测工具` gift push path for APPID `tt02d6746b9cb2fc0e10` to Douyin Cloud service `jztw-live-svc`, path `/live_data_callback (jztw_live_data)`.
+- Added the four self-test platform gift ids to `douyin-cloud-service/server.js` so platform payloads that omit Chinese gift names still map deterministically.
+- Published Douyin Cloud release `427674` from GitHub repo `zlan8535-sketch/jizhantuwei-live-game`, branch `main`, commit `a0b468f5216181eb84217e8af241c4eb3e70231c`.
+- Used the platform self-test tool with role `11` to push four gift callbacks: `仙女棒`, `能力药丸`, `能量电池`, and `超级空投`.
+
+Files touched:
+- `douyin-cloud-service/server.js`
+- `douyin-cloud-service/smoke-test.js`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `node smoke-test.js` with bundled Node runtime
+- `git push origin main`
+- Chrome platform self-test on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/diagnose_tool?subTab=1&tab=openAPI`
+- Chrome Douyin Cloud publish on `https://cloud.douyin.com/app/deploy/publish?app=tt02d6746b9cb2fc0e10&env=env-cuABsk2rKR&service=1m3j5q7o3dezm&source=1&type=5`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+
+Verification:
+- Local cloud smoke test passed.
+- Douyin Cloud release `427674` reached status `成功`; the build log locked commit `a0b468f5216181eb84217e8af241c4eb3e70231c`.
+- `/api/health` returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- Platform self-test returned `推送成功` for all four gift rows.
+- Cloud event queue returned `latestSeq: 4`; all four callbacks arrived from `source: douyin-platform, internal-callback` with `callbackPath: /live_data_callback`.
+- Self-test gift mappings are now correct: `仙女棒 -> pistol`, `能力药丸 -> shotgun`, `能量电池 -> machine`, `超级空投 -> giant`.
+
+Risks / notes:
+- This proves the Open Platform self-test callback path to Douyin Cloud and the cloud event queue. It still is not the final real live-room validation because the events are marked `test: true`.
+- Real comment, like, and gift validation still needs the debug account to launch the official debug/live entry and send events from a real room context.
+- Do not use old MRTGD APPID `ttd2d6a46b4cb22c0b10`, service `1m3ly8e4e9hqe`, or repo `mrtgd-douyin-cloud-service`.
+
+Next step:
+- Use the newly added test/debug account to launch the official debug package, then verify real-room `roomId`, comment, like, gift callbacks, and gameplay client polling from `/api/live/events`.
+
 ## 2026-06-14 14:17 - Debug Package Deployed, Test Member Missing
 
 Status: Partial / Waiting for a real Douyin debug member and live-room launch
