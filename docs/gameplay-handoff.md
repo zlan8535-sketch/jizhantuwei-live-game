@@ -1,3 +1,34 @@
+## 2026-06-14 19:28 - Post 1.0.6 Cloud Poll
+
+Status: Done / Goal still needs phone live visual verification
+
+What changed:
+- Rechecked the repository and release notes after the `1.0.6_` upload.
+- Polled the target Douyin Cloud event queue for events after the local avatar preview test seq `18`.
+- Cleaned stale release-checklist wording that still pointed the next validation gate at old `1.0.2_`.
+
+Files touched:
+- `docs/douyin-platform-release-checklist.md`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `git status --short --branch`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=18`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+
+Verification:
+- Git was clean before the docs cleanup, with latest pushed commit `039a5b9 Retune live avatars for phone`.
+- Cloud health returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+- Event poll after seq `18` returned `latestSeq=18 newCount=0`, so no new real phone/live companion events have arrived after the deployed `1.0.6_` avatar retune yet.
+- Diagnostics still show the latest real/platform callback evidence predates `1.0.6_`; the newest event is the local HTTP avatar preview at seq `18`.
+
+Risks / notes:
+- The full objective remains unproven until `1.0.6_` is relaunched from phone/live companion and real comment/like/gift events are visually accepted in the gameplay.
+
+Next step:
+- User should relaunch `1.0.6_` from phone/live companion, then send real comment, likes, and one or more gifts; afterward poll cloud events after seq `18` and record the visual result in `docs/douyin-live-validation-1.0.6.md`.
+
 ## 2026-06-14 19:16 - Mobile Avatar Retune 1.0.6
 
 Status: Done / Platform deployed / Needs phone visual verification

@@ -16,9 +16,9 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-Latest real live/debug-room status: on 2026-06-14 15:14, the user live debug launch produced real Douyin Cloud callbacks for like, comment, and gift. The in-game package initially had no feedback because the uploaded client did not have a default cloud URL when launched by the platform. The client fallback was fixed in `1.0.1`. On 2026-06-14 16:46, `1.0.2` was uploaded to the Open Platform and later showed `1.0.2_` with status `部署完成`; this package adds real viewer avatar propagation and smaller round soldier-head avatars. The next gate is relaunching the `1.0.2_` debug package and verifying real in-game feedback.
+Latest real live/debug-room status: on 2026-06-14 15:14, the user live debug launch produced real Douyin Cloud callbacks for like, comment, and gift. The in-game package initially had no feedback because the uploaded client did not have a default cloud URL when launched by the platform. The client fallback was fixed in `1.0.1`, avatar propagation and round clipping shipped after `1.0.2`, and the current phone-readable avatar retune is deployed as `1.0.6_`. The next gate is relaunching `1.0.6_` from phone/live companion and verifying real in-game feedback plus avatar readability.
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, platform comment/gift/like callbacks are reaching the target cloud service, and debug package `1.0.2_` is deployed. The next gate is relaunching the debug package so the platform-running client starts cloud polling without a local preview query parameter, then validating real comment/like/gift/avatar feedback in-game.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, platform comment/gift/like callbacks are reaching the target cloud service, and debug package `1.0.6_` is deployed. The next gate is relaunching the current debug package from phone/live companion so the platform-running client starts cloud polling without a local preview query parameter, then validating real comment/like/gift/avatar feedback in-game.
 
 ## Historical Package Notes (1.0.2)
 
@@ -229,7 +229,7 @@ The goal is not complete until all gates pass:
 - Open Platform self-test is verified: platform self-test tool -> Douyin Cloud `/live_data_callback` -> `/api/live/events`.
 - Local preview consumed a fresh platform self-test event from the deployed cloud queue and spawned a viewer soldier.
 - The deployed client delivery path is verified with a real platform callback: official live/debug entry -> Douyin Cloud `/live_data_callback` -> `/api/live/events` -> gameplay client.
-- Debug package upload succeeds on the Douyin Open Platform. Done for old `1.0.0` on 2026-06-14 14:04; done for fixed `1.0.1` on 2026-06-14 15:55; done for avatar-fixed `1.0.2` on 2026-06-14 16:46.
+- Debug package upload succeeds on the Douyin Open Platform. Done for old `1.0.0` on 2026-06-14 14:04; done for fixed `1.0.1` on 2026-06-14 15:55; done for avatar-fixed `1.0.2` on 2026-06-14 16:46; done for phone avatar retune `1.0.6` on 2026-06-14 19:16:41.
 - Cloud deployment succeeds. Done for old `1.0.0`; done for fixed `1.0.1` on 2026-06-14 15:58; latest Git publish `427723` started on 2026-06-14 17:01 and deployed avatar normalization.
 - Official launch provides real live-room context.
 - Real comment callback spawns a viewer soldier.
@@ -239,12 +239,12 @@ The goal is not complete until all gates pass:
 
 ## Current Blockers / Notes
 
-- Fixed debug package `1.0.2_` is uploaded and deployed.
-- Chrome automation successfully uploaded `1.0.2`; the earlier file picker issue only applied to the older `1.0.1` upload attempt.
+- Current debug package `1.0.6_` is uploaded and deployed.
+- Chrome automation successfully uploaded `1.0.6`; the earlier file picker issue only applied to older upload attempts.
 - One platform test member is present and shows status `已生效`.
 - Platform self-test callbacks reached the target cloud service, and the local preview consumed a fresh self-test like callback from the deployed cloud queue.
 - Real live/debug-room callbacks now reach Douyin Cloud, but old `1.0.0_` did not show in-game feedback because the client package lacked a default cloud URL.
-- Remaining blocker is relaunching the deployed `1.0.2_` debug package and sending real comment, like, gift, and avatar-bearing events.
+- Remaining blocker is relaunching the deployed `1.0.6_` debug package and sending real comment, like, gift, and avatar-bearing events from the phone/live companion flow.
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.
