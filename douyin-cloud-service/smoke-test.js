@@ -126,6 +126,88 @@ async function main() {
       assert.equal(platformSelfTestGift.body.data.roomId, "room-platform-self-test");
     }
 
+    const magicFairyStickGift = await request("/live_data_callback", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-room-id": "room-magic-gift",
+        "x-tt-appid": APP_ID
+      },
+      body: JSON.stringify([
+        {
+          msg_id: "magic-fairy-stick-1",
+          sec_openid: "magic-openid",
+          sec_gift_id: "n1/Dg1905sj1FyoBlQBvmbaDZFBNaKuKZH6zxHkv8Lg5x2cRfrKUTb8gzMs=",
+          sec_magic_gift_id: "9tPFzcpEQFovisU3j3coz5tqj/qQ5LHJQJWob/X5bLbxm1s7kYLj0aGSb4k=",
+          gift_num: 1,
+          gift_value: 10,
+          nickname: "magic-user",
+          timestamp: Date.now()
+        }
+      ])
+    });
+    assert.equal(magicFairyStickGift.response.status, 200);
+    assert.equal(magicFairyStickGift.body.data.msgType, "live_gift");
+    assert.equal(magicFairyStickGift.body.data.giftType, "shotgun");
+    assert.equal(
+      magicFairyStickGift.body.data.magicGiftId,
+      "9tPFzcpEQFovisU3j3coz5tqj/qQ5LHJQJWob/X5bLbxm1s7kYLj0aGSb4k="
+    );
+
+    const colorFairyStickGifts = [
+      ["color-blue-stick", "blue fairy stick", "shotgun"],
+      ["color-purple-stick", "purple fairy stick", "machine"],
+      ["color-gold-stick", "gold fairy stick", "giant"]
+    ];
+    for (const [msgId, giftName, giftType] of colorFairyStickGifts) {
+      const colorFairyStickGift = await request("/live_data_callback", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-room-id": "room-color-gift",
+          "x-tt-appid": APP_ID
+        },
+        body: JSON.stringify([
+          {
+            msg_id: msgId,
+            sec_openid: "color-openid",
+            sec_gift_id: `${msgId}-id`,
+            gift_name: giftName,
+            gift_num: 1,
+            gift_value: 10,
+            nickname: "color-user",
+            timestamp: Date.now()
+          }
+        ])
+      });
+      assert.equal(colorFairyStickGift.response.status, 200);
+      assert.equal(colorFairyStickGift.body.data.msgType, "live_gift");
+      assert.equal(colorFairyStickGift.body.data.giftType, giftType);
+    }
+
+    const unknownCheapGift = await request("/live_data_callback", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-room-id": "room-cheap-gift",
+        "x-tt-appid": APP_ID
+      },
+      body: JSON.stringify([
+        {
+          msg_id: "cheap-gift-1",
+          sec_openid: "cheap-openid",
+          sec_gift_id: "unknown-cheap-gift",
+          gift_num: 1,
+          gift_value: 10,
+          nickname: "cheap-user",
+          timestamp: Date.now()
+        }
+      ])
+    });
+    assert.equal(unknownCheapGift.response.status, 200);
+    assert.equal(unknownCheapGift.body.data.msgType, "live_gift");
+    assert.equal(unknownCheapGift.body.data.giftType, "pistol");
+
     const platformViewerEnter = await request("/live_data_callback", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -180,17 +262,22 @@ async function main() {
 
     const state = await request("/api/live/state");
     assert.equal(state.body.data.counters.live_comment, 2);
-    assert.equal(state.body.data.counters.live_gift, 5);
+    assert.equal(state.body.data.counters.live_gift, 10);
     assert.equal(state.body.data.counters.live_user_enter, 2);
     assert.equal(state.body.data.counters.unknown, 0);
 
     const events = await request("/api/live/events?after=0");
     assert.equal(events.response.status, 200);
-    assert.ok(events.body.data.latestSeq >= 9);
+    assert.ok(events.body.data.latestSeq >= 14);
     assert.deepEqual(
       events.body.data.events.map(event => event.msgType),
       [
         "live_comment",
+        "live_gift",
+        "live_gift",
+        "live_gift",
+        "live_gift",
+        "live_gift",
         "live_gift",
         "live_gift",
         "live_gift",

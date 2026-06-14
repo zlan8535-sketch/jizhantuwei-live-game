@@ -258,12 +258,53 @@ const PLATFORM_GIFT_ID_TO_SOLDIER_TYPE = new Map([
   ["lsEGaeC++k/yZbzTU2ST64EukfpPENQmqEZxaK9v1+7etK+qnCRKOnDyjsE=", "giant"]
 ]);
 
-function mapGiftSoldierType(giftName, giftId, giftValue) {
+const PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE = new Map([
+  // Observed from the real-room gift payload; keep magic gift ids first so
+  // low-price colored fairy-stick variants can override the base gift id.
+  ["9tPFzcpEQFovisU3j3coz5tqj/qQ5LHJQJWob/X5bLbxm1s7kYLj0aGSb4k=", "shotgun"]
+]);
+
+function mapGiftSoldierType(giftName, giftId, giftValue, magicGiftId) {
+  const knownMagicGiftType = PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE.get(String(magicGiftId || ""));
+  if (knownMagicGiftType) return knownMagicGiftType;
+
   const knownGiftType = PLATFORM_GIFT_ID_TO_SOLDIER_TYPE.get(String(giftId || ""));
   if (knownGiftType) return knownGiftType;
 
-  const key = `${giftName || ""} ${giftId || ""}`.toLowerCase();
+  const key = `${giftName || ""} ${giftId || ""} ${magicGiftId || ""}`.toLowerCase();
   const value = Number(giftValue || 0);
+
+  if (key.includes("fairy") || key.includes("stick") || key.includes("sparkler") || key.includes("xiannv")) {
+    if (
+      key.includes("blue") ||
+      key.includes("cyan") ||
+      key.includes("green") ||
+      key.includes("teal") ||
+      key.includes("\u84dd") ||
+      key.includes("\u9752") ||
+      key.includes("\u7eff")
+    ) {
+      return "shotgun";
+    }
+    if (
+      key.includes("purple") ||
+      key.includes("violet") ||
+      key.includes("\u7d2b")
+    ) {
+      return "machine";
+    }
+    if (
+      key.includes("gold") ||
+      key.includes("yellow") ||
+      key.includes("orange") ||
+      key.includes("\u91d1") ||
+      key.includes("\u9ec4") ||
+      key.includes("\u6a59")
+    ) {
+      return "giant";
+    }
+    return "pistol";
+  }
 
   if (key.includes("shotgun") || key.includes("short") || key.includes("能力药丸")) return "shotgun";
   if (key.includes("machine") || key.includes("heavy") || key.includes("能量电池")) return "machine";
@@ -278,7 +319,7 @@ function mapGiftSoldierType(giftName, giftId, giftValue) {
   }
   if (key.includes("pistol") || key.includes("仙女棒")) return "pistol";
 
-  if (value === 10) return "shotgun";
+  if (value === 10) return "pistol";
   if (value === 99) return "machine";
   if ([520, 888, 1200, 3000].includes(value)) return "giant";
   return "pistol";
@@ -304,6 +345,17 @@ function normalizeCallback(body) {
   );
   const giftName = pickFirst(payload.gift_name, payload.giftName, data.gift_name, data.giftName, gift.gift_name, gift.giftName, gift.name, giftId);
   const giftValue = Number(pickFirst(payload.gift_value, payload.giftValue, data.gift_value, data.giftValue, gift.gift_value, gift.giftValue) || 0);
+  const magicGiftId = pickFirst(
+    payload.sec_magic_gift_id,
+    payload.magic_gift_id,
+    payload.magicGiftId,
+    data.sec_magic_gift_id,
+    data.magic_gift_id,
+    data.magicGiftId,
+    gift.sec_magic_gift_id,
+    gift.magic_gift_id,
+    gift.magicGiftId
+  );
   const avatarUrl = pickFirst(
     payload.avatar_url,
     payload.avatarUrl,
@@ -339,8 +391,9 @@ function normalizeCallback(body) {
     avatarUrl,
     giftName,
     giftId,
+    magicGiftId,
     giftValue,
-    giftType: msgType === "live_gift" ? mapGiftSoldierType(giftName, giftId, giftValue) : "",
+    giftType: msgType === "live_gift" ? mapGiftSoldierType(giftName, giftId, giftValue, magicGiftId) : "",
     comment: pickFirst(payload.comment, payload.content, payload.text, payload.msg_content, data.comment, data.content, data.text, data.msg_content),
     enterRoomType: Number(pickFirst(payload.enter_room_type, data.enter_room_type) || 0),
     isOldPlayer: pickFirst(payload.is_old_player, data.is_old_player),
@@ -512,6 +565,8 @@ async function handleLiveDataCallback(req, res, callbackPath = "/live_data_callb
       msgType: event.msgType,
       msgId: event.msgId,
       roomId: event.roomId,
+      giftId: event.giftId,
+      magicGiftId: event.magicGiftId,
       giftType: event.giftType,
       callbackPath,
       seq: event.seq

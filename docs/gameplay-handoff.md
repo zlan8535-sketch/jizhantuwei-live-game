@@ -1,3 +1,46 @@
+## 2026-06-14 21:28 - Real Live Gift Data And Low-Price Fairy Stick Mapping
+
+Status: Partial / Cloud code verified locally, needs Git push and Douyin Cloud deploy
+
+What changed:
+- Polled the active Douyin Cloud service after the user started a real live room.
+- Confirmed the real room `7651235730450058019` reached the JiZhanTuWei cloud service for APPID `tt02d6746b9cb2fc0e10`.
+- Added cloud support for low-price colored fairy-stick gifts: `sec_magic_gift_id` is now extracted and checked before the base encrypted gift id, so same-price/same-family gifts can map to different soldier types.
+- Added fallback color parsing for `fairy/stick/sparkler/xiannv`: blue/cyan/green -> shotgun, purple/violet -> machine, gold/yellow/orange -> giant, default -> pistol.
+- Kept old encrypted gift ids compatible for the current configured gifts.
+- Added smoke-test coverage for the observed magic gift id, colored fairy-stick names, and unknown cheap gifts defaulting to pistol.
+
+Files touched:
+- `douyin-cloud-service/server.js`
+- `douyin-cloud-service/smoke-test.js`
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=0`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+- `C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe --check douyin-cloud-service\server.js`
+- `C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe --check douyin-cloud-service\smoke-test.js`
+- `C:\Users\Admin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe douyin-cloud-service\smoke-test.js`
+
+Verification:
+- Cloud health returned `jizhantuwei-live-cloud-service`.
+- The cloud queue had restarted, so the correct baseline is `after=0`, not the old local seq `18`.
+- Real live room `7651235730450058019` produced `latestSeq=7`, all seven callbacks were `live_gift`, all had `source: douyin-platform, internal-callback`, real nickname `。。现如今提`, and avatar URLs.
+- Diagnostics show real task starts succeeded for `live_like`, `live_comment`, and `live_gift`.
+- Current real counters are `live_gift=7`, `live_like=0`, `live_comment=0`; likes/comments were not observed in this latest real room yet.
+- One observed gift payload included `sec_magic_gift_id=9tPFzcpEQFovisU3j3coz5tqj/qQ5LHJQJWob/X5bLbxm1s7kYLj0aGSb4k=`, now mapped to `shotgun` when present.
+- Local cloud smoke test passed after the mapping change.
+
+Risks / notes:
+- If all four platform gifts are changed to different colored `仙女棒`, the reliable discriminator is expected to be `sec_magic_gift_id`. Unknown magic ids will show in `/api/live/events` and `/api/douyin/diagnostics`, then should be added to `PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE`.
+- The current code can already distinguish color names if the platform sends readable names, but real payloads seen so far use encrypted gift ids.
+- This cloud mapping is verified locally but is not live until committed, pushed, and deployed through Douyin Cloud Git publish.
+
+Next step:
+- Commit and push the cloud change, publish the JiZhanTuWei Douyin Cloud service, then update the platform gift ability so all four tiers use low-price colored fairy-stick variants. After self-test or real gifts, capture the remaining magic gift ids and map them to pistol/shotgun/machine/giant.
+
 ## 2026-06-14 19:28 - Post 1.0.6 Cloud Poll
 
 Status: Done / Goal still needs phone live visual verification
