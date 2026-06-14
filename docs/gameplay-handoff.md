@@ -1,3 +1,33 @@
+## 2026-06-14 12:27 - Dedicated GitHub Repository Created
+
+Status: Done / Needs platform binding
+
+What changed:
+- Created a dedicated GitHub repository for this project: `https://github.com/zlan8535-sketch/jizhantuwei-live-game`.
+- Added `origin` in `C:\projects\JiZhanTuWei_3.8.3ts`.
+- Pushed local `main` to the new repository.
+- Updated the release checklist so future Douyin Cloud work uses this dedicated repository instead of the old MRTGD repository.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- `git remote add origin https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`
+- `git push -u origin main`
+
+Verification:
+- GitHub page loaded as `zlan8535-sketch/jizhantuwei-live-game`.
+- Local `origin` points to `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`.
+- Initial pushed commit: `8c42651 Initialize JiZhanTuWei live project`.
+
+Risks / notes:
+- Douyin Cloud is not yet bound to this new repository.
+- The old cloud service URL still belongs to the MRTGD route and must not be used as the JiZhanTuWei deployment target.
+
+Next step:
+- Switch/create the Douyin Cloud Git deployment for target APPID `tt02d6746b9cb2fc0e10` to use `zlan8535-sketch/jizhantuwei-live-game`, preferably deploying the `douyin-cloud-service/` subdirectory or a repository/service layout that Douyin Cloud supports.
+
 ## 2026-06-14 12:22 - Project Repository Separation
 
 Status: Partial

@@ -2,7 +2,7 @@
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared and the cloud-service source exists locally, but a dedicated JiZhanTuWei GitHub remote, Douyin Cloud deployment, platform ability configuration, upload, and real live-room verification are not complete yet.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source exists locally, and a dedicated JiZhanTuWei GitHub remote has been created, but Douyin Cloud deployment, platform ability configuration, upload, and real live-room verification are not complete yet.
 
 ## Current Package
 
@@ -79,7 +79,9 @@ Git status:
 
 - Do not use `https://github.com/zlan8535-sketch/mrtgd-douyin-cloud-service.git` for this project.
 - The accidental JiZhanTuWei commit in that old MRTGD repository was reverted with commit `a2f9670 Revert "Adapt cloud service for JiZhanTuWei app"`.
-- A dedicated JiZhanTuWei repository still needs to be created and connected before Douyin Cloud Git deployment.
+- Dedicated JiZhanTuWei repository: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`
+- Initial pushed project commit: `8c42651 Initialize JiZhanTuWei live project`
+- This repository still needs to be selected in Douyin Cloud Git deployment for the target APPID flow.
 
 Deployment status as of 2026-06-14 12:22:
 
@@ -149,7 +151,7 @@ After upload:
 The goal is not complete until all gates pass:
 
 - Target APPID `tt02d6746b9cb2fc0e10` is used consistently. Do not complete setup only on old app `ttd2d6a46b4cb22c0b10`.
-- A dedicated JiZhanTuWei GitHub repository is created and selected in Douyin Cloud Git deployment.
+- The dedicated JiZhanTuWei GitHub repository is selected in Douyin Cloud Git deployment.
 - Platform abilities for comment, like, and gift are configured or approved.
 - Douyin Cloud Git publish/deploy is complete for the service used by this APPID.
 - The deployed `/api/health` returns `jizhantuwei-live-cloud-service`, not `mrtgd-live-cloud-service`.
@@ -168,6 +170,7 @@ The goal is not complete until all gates pass:
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.
-- A dedicated JiZhanTuWei GitHub remote does not exist yet in the connected GitHub installation search results.
-- GitHub CLI `gh` is not installed, and the GitHub connector available here cannot create new repositories.
+- Dedicated GitHub remote now exists: `https://github.com/zlan8535-sketch/jizhantuwei-live-game.git`.
+- GitHub CLI `gh` is not installed; repository creation was completed through the logged-in Chrome GitHub session.
+- Douyin Cloud has not yet been switched from the old MRTGD repo/service route to the dedicated JiZhanTuWei repository.
 - The Open Platform target app page currently shows `testlevel002` / APPID `tt02d6746b9cb2fc0e10` at step `3 开发玩法&提审`; `申请能力`, `开发玩法`, and `提交审核` are still part of the remaining platform flow.
