@@ -173,6 +173,9 @@ Upload drawer fields:
 
 After upload:
 
+- Upload completed on 2026-06-14 14:04.
+- The platform showed `调试版本上传成功`.
+- Debug version list shows `1.0.0_` with status `部署中`.
 - Wait for cloud deployment to finish. The platform text says this can take about 30 minutes.
 - Add/configure a debug member account if needed.
 - Open the debug package through live companion or the official live/debug entry.
@@ -188,8 +191,8 @@ The goal is not complete until all gates pass:
 - The deployed `/api/health` returns `jizhantuwei-live-cloud-service`, not `mrtgd-live-cloud-service`.
 - The client delivery path is implemented and locally verified: local callback -> cloud service -> `/api/live/events` -> gameplay client -> `__JZTW_LIVE__`.
 - The deployed client delivery path is verified with a real platform callback: official live/debug entry -> Douyin Cloud `/live_data_callback` -> `/api/live/events` -> gameplay client.
-- Debug package upload succeeds on the Douyin Open Platform.
-- Cloud deployment succeeds.
+- Debug package upload succeeds on the Douyin Open Platform. Done on 2026-06-14 14:04.
+- Cloud deployment succeeds. Pending: version page currently shows `部署中`.
 - Official launch provides real live-room context.
 - Real comment callback spawns a viewer soldier.
 - Real like callback spawns a soldier after the configured threshold.
@@ -198,8 +201,8 @@ The goal is not complete until all gates pass:
 
 ## Current Blockers / Notes
 
-- Debug package upload is the main remaining blocker. The Open Platform upload drawer can be opened and fields can be filled, but the Chrome automation file chooser did not attach `C:\projects\JiZhanTuWei_3.8.3ts\release\douyin-debug\JiZhanTuWei_1.0.0.zip`.
-- A fresh version-management tab was usable, so the issue is specific to file selection/upload, not the APPID page or login state.
+- Debug package upload is no longer blocked. The Chrome upload flow succeeded by targeting the inner `选择文件` control.
+- Current blocker is platform cloud deployment time: debug version `1.0.0_` is visible with status `部署中`.
 - Native Cocos Windows build failed because this machine lacks a usable Visual Studio C++ compiler / `CMAKE_CXX_COMPILER`.
 - The prepared package is an NW.js wrapper around `build/web-mobile`, not a native Cocos Windows build.
 - `dycloud` CLI is not installed on this machine.

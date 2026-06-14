@@ -1,3 +1,33 @@
+## 2026-06-14 14:04 - Debug Package Uploaded To Open Platform
+
+Status: Partial / Waiting for platform cloud deployment
+
+What changed:
+- Completed the Open Platform debug package upload for APPID `tt02d6746b9cb2fc0e10`.
+- Uploaded package `release/douyin-debug/JiZhanTuWei_1.0.0.zip`.
+- Filled debug version `1.0.0`, startup exe `JiZhanTuWei.exe`, resolution `1080P`, and display ratio `9:16`.
+- After file selection, the platform showed `调试版本上传成功`; the debug version list now shows version `1.0.0_` with status `部署中`.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- Browser upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- Polled the version page after upload.
+
+Verification:
+- The uploaded file was recognized by the platform as `JiZhanTuWei_1.0.0.zip`.
+- The platform returned the visible success message `调试版本上传成功`.
+- The version list shows debug version `1.0.0_` and status `部署中`.
+
+Risks / notes:
+- Platform cloud deployment is not finished yet. The page says debug package deployment can take about 30 minutes.
+- Real live-room validation is still pending until deployment completes and the debug package can be launched from the official live/debug entry.
+
+Next step:
+- Continue polling the debug version status. After deployment succeeds, add/configure a debug member if needed and launch through the official debug/live entry to verify real `roomId`, comment, like, and gift callbacks.
+
 ## 2026-06-14 13:47 - Platform Ability Config And Gift Mapping Verified
 
 Status: Partial / Package upload still blocked by Chrome file chooser
