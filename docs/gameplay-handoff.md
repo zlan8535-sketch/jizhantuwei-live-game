@@ -1,3 +1,38 @@
+## 2026-06-14 18:29 - Mobile Avatar Size 1.0.5
+
+Status: Done / Platform deployed / Needs phone visual verification
+
+What changed:
+- User re-tested on phone live flow: likes work, but viewer avatars were still too small for mobile opening/stream viewing.
+- Increased viewer soldier avatar size for mobile 9:16 viewing: normal viewer avatars now use `18px`, giant viewer avatars use `22px`.
+- Increased circular fallback by using `avatarSize + 3`; fallback label sizes are now normal `10px`, giant `13px`.
+- Rebuilt `build\web-mobile`, regenerated `release\douyin-debug\JiZhanTuWei_1.0.5.zip`, and uploaded it to APPID `tt02d6746b9cb2fc0e10`.
+
+Files touched:
+- `assets/Game/Script/Custom/RoleLayer.ts`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
+- Repacked `release\douyin-debug\JiZhanTuWei_1.0.5.zip` from the `1.0.4` Windows shell and the latest `build\web-mobile` assets.
+- Chrome upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+
+Verification:
+- Latest build log `temp\builder\log\web-mobile2026-6-14 18-12.log` ended with `build success`.
+- `build\web-mobile\assets\Game\index.js` contains `?22:18`, no longer contains `?15:12` or `?11:8`, and still contains `GRAPHICS_ELLIPSE` plus `__JZTW_LIVE__`.
+- `release\douyin-debug\JiZhanTuWei_1.0.5\assets\Game\index.js` passed the same checks before zipping.
+- Package SHA256: `5F1231147EDB2ADFFCEDC64296F4FA2D76092167C6BC53799FD5158C020E750E`; size `220752873`.
+- Local in-app browser opened `http://127.0.0.1:8080/index.html?v=1781432005000` with a 540x960 viewport.
+- Direct cloud callback seq `11` produced `礼物出兵` and local preview showed round viewer avatars on soldier heads.
+- Open Platform accepted `1.0.5_` at `2026-06-14 18:25:15`; later polling confirmed status `部署完成`.
+
+Risks / notes:
+- Final phone/live companion validation is still needed after relaunching the deployed `1.0.5_` debug package.
+- This change only affects viewer avatar visual size; live like/comment/gift mechanics were not changed.
+
+Next step:
+- Relaunch the debug gameplay from phone/live companion and visually confirm avatar readability in the real mobile stream view.
+
 ## 2026-06-14 18:05 - Platform Self-Test After 1.0.4
 
 Status: Done / Real phone visual verification still needed
