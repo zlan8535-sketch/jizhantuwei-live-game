@@ -1,12 +1,13 @@
 ## 2026-06-14 17:50 - Mobile Live Avatar Size Retune
 
-Status: Done / Platform upload pending
+Status: Done / Platform deployed / Needs phone visual verification
 
 What changed:
 - User verified real mobile live testing: likes are working, but viewer avatars were too small on phone.
 - Retuned viewer avatar size for the phone live 9:16 view instead of desktop preview.
 - Normal viewer avatars now use `12px`, giant viewer avatars use `15px`; circular mask clipping remains unchanged.
 - Regenerated `release\douyin-debug\JiZhanTuWei_1.0.4.zip`.
+- Uploaded `1.0.4_` to APPID `tt02d6746b9cb2fc0e10`.
 
 Files touched:
 - `assets/Game/Script/Custom/RoleLayer.ts`
@@ -15,18 +16,20 @@ Files touched:
 Commands run:
 - `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
 - Repacked `release\douyin-debug\JiZhanTuWei_1.0.4.zip` from the `1.0.3` Windows shell and the latest `build\web-mobile` assets.
+- Chrome upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
 
 Verification:
 - Latest `build\web-mobile\assets\Game\index.js` contains `?15:12`, no longer contains `?11:8`.
 - `release\douyin-debug\JiZhanTuWei_1.0.4\assets\Game\index.js` passed the same check before zipping.
 - Package SHA256: `62772ECEABC9D443E31054272D442A0A958622BBD6A58463CD088A96DC3E1317`.
+- Platform version page shows debug package `1.0.4_` and status `部署完成`.
 
 Risks / notes:
 - Cocos CLI can return before the builder log reaches final `build success`; wait for the latest `temp\builder\log\web-mobile*.log` before repacking.
 - This change only affects viewer avatar visual size; live like/comment/gift behavior was not changed.
 
 Next step:
-- Upload `C:\projects\JiZhanTuWei_3.8.3ts\release\douyin-debug\JiZhanTuWei_1.0.4.zip` to APPID `tt02d6746b9cb2fc0e10`, then verify on phone live preview.
+- Relaunch the debug gameplay from phone/live companion so the running session picks up `1.0.4_`, then visually confirm the round avatars are readable but not blocking soldier heads.
 
 ## 2026-06-14 17:25 - Viewer Avatar Size Tightened
 
