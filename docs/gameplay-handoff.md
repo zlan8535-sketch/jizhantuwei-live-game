@@ -1,3 +1,47 @@
+## 2026-06-14 17:06 - Debug Package 1.0.2 Uploaded And Cloud Republished
+
+Status: Done / Needs real live-room relaunch validation
+
+What changed:
+- Uploaded `release\douyin-debug\JiZhanTuWei_1.0.2.zip` to the target APPID `tt02d6746b9cb2fc0e10`.
+- Platform version page showed debug package `1.0.2_` with status `部署完成`.
+- Cloud start remains enabled with `1080P` resolution and `9:16` display ratio.
+- Ran Open Platform self-test before cloud republish: four gift tiers, comment, and like reached the target cloud service.
+- Republished Douyin Cloud service from Git repository `zlan8535-sketch/jizhantuwei-live-game`, branch `main`, with release id `427723`.
+- After cloud republish, `/api/health` stayed healthy and a test callback returned top-level `avatarUrl`, confirming the latest cloud avatar normalization code is deployed.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+
+Commands run:
+- Chrome upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- Chrome platform self-test on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/diagnose_tool?subTab=1&tab=openAPI`
+- Chrome cloud publish on `https://cloud.douyin.com/app/deploy/publish?app=tt02d6746b9cb2fc0e10&env=env-cuABsk2rKR&service=1m3j5q7o3dezm&source=1&type=5`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=49`
+- `POST https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/live_data_callback`
+
+Verification:
+- Platform debug package card: `1.0.2_`, `部署完成`, `1080P / 9:16`.
+- Platform self-test advanced cloud events from seq `49` to `55`.
+- Self-test event mapping:
+  - seq `50`: `live_gift`, `giftType=pistol`, `giftValue=10`
+  - seq `51`: `live_gift`, `giftType=shotgun`, `giftValue=100`
+  - seq `52`: `live_gift`, `giftType=machine`, `giftValue=990`
+  - seq `53`: `live_gift`, `giftType=giant`, `giftValue=8880`
+  - seq `54`: `live_comment`, `comment=加入`
+  - seq `55`: `live_like`, `count=10`
+- After cloud republish, health returned `jizhantuwei-live-cloud-service`.
+- After cloud republish, direct callback produced seq `1` with top-level `avatarUrl`.
+
+Risks / notes:
+- Cloud republish restarted the in-memory event queue, so `latestSeq` reset to `1`. This does not affect future platform callbacks, but any already queued debug events before the restart are gone.
+- Official live/debug entry has not yet been relaunched after `1.0.2_`; real in-game feedback still needs one live-room validation pass.
+
+Next step:
+- Relaunch `testlevel002-调试包` from the official live/debug entry, then send real comment `加入`, likes, and mapped gifts. Confirm the game running from the platform package shows join soldiers, like soldiers, gift soldiers, gift banner, and round real avatars.
+
 ## 2026-06-14 16:39 - Viewer Avatar URL And Round Head Preview
 
 Status: Done / Platform package upload still pending
