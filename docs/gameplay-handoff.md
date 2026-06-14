@@ -1,3 +1,40 @@
+## 2026-06-14 18:58 - 1.0.5 Cloud Smoke After Deployment
+
+Status: Done / Goal still needs phone live visual verification
+
+What changed:
+- Rechecked the Open Platform version page through Chrome: debug package `1.0.5_` is still `部署完成`, submitted at `2026-06-14 18:25:15`, cloud start `1080P / 9:16`.
+- Tried to open the Open Platform self-test tool, but the Chrome control session timed out twice on the diagnose page.
+- Ran a direct cloud smoke test against `/live_data_callback` for comment, like, and all four mapped gift tiers.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- Chrome read-only check on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+- `POST https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/live_data_callback`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/live/events?after=11`
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/douyin/diagnostics`
+
+Verification:
+- Version page showed `1.0.5_`, status `部署完成`, cloud start `1080P / 9:16`.
+- Cloud events advanced from seq `11` to `17`.
+- New smoke events:
+  - seq `12`: `live_comment`, comment `join`, avatar present.
+  - seq `13`: `live_like`, count `10`, avatar present.
+  - seq `14`: `live_gift`, `giftType=pistol`, `giftValue=10`, avatar present.
+  - seq `15`: `live_gift`, `giftType=shotgun`, `giftValue=100`, avatar present.
+  - seq `16`: `live_gift`, `giftType=machine`, `giftValue=990`, avatar present.
+  - seq `17`: `live_gift`, `giftType=giant`, `giftValue=8880`, avatar present.
+- Diagnostics counters increased to `live_like=2`, `live_comment=3`, `live_gift=12`.
+
+Risks / notes:
+- The direct cloud smoke test proves callback normalization and event queue mapping, but it is not a real platform self-test and does not prove phone live visuals.
+- The overall goal remains incomplete until `1.0.5_` is relaunched from phone/live companion and the user confirms comment/like/gift feedback plus avatar readability.
+
+Next step:
+- Run the phone/live companion validation sheet for `1.0.5_`. If self-test tooling is needed again, retry the diagnose page from a fresh Chrome session.
+
 ## 2026-06-14 18:48 - 1.0.5 Phone Live Validation Sheet
 
 Status: Done / Goal still needs phone live validation
