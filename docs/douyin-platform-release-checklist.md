@@ -3,24 +3,25 @@
 ## Current Authoritative Status
 
 - APPID: `tt02d6746b9cb2fc0e10`
-- Current debug package: `1.0.6_`
-- Platform status: deployed on 2026-06-14 19:16:41, cloud start enabled at `1080P / 9:16`
-- Upload package: `release/douyin-debug/JiZhanTuWei_1.0.6.zip`
-- Package SHA256: `02DF468AE5C4AE57DD25123289E3EF188D4B1F04AD9BFFEA44820D5BE0CE59DB`
+- Current debug package: `1.0.7_`
+- Platform status: uploaded on 2026-06-14 21:47:21, still `部署中` as of the latest poll; previous `1.0.6_` package was deployed on 2026-06-14 19:16:41
+- Upload package: `release/douyin-debug/JiZhanTuWei_1.0.7.zip`
+- Package SHA256: `FA701378C0C273C88A3D485166D12AB8C3AA9CA615C37EB037353E44F89B5A11`
 - Package size: `220752872`
 - Launch exe: `JiZhanTuWei.exe`
 - Live mechanics: comment, like, and gift callbacks are connected through the target Douyin Cloud service.
 - Latest client change: phone-oriented round viewer avatar sizing, normal `26px`, giant `32px`.
 - Latest real live room: `7651235730450058019`; on 2026-06-14 it produced 7 real `live_gift` callbacks with avatar URLs through `douyin-platform, internal-callback`.
-- Latest cloud code change pending deploy: low-price colored fairy-stick gifts can be distinguished by `sec_magic_gift_id` first, then readable color names, while keeping existing encrypted gift ids compatible.
-- Remaining gate: publish the latest cloud code, change the platform gift ability to four low-price colored fairy-stick variants, then relaunch/continue the phone live flow and verify real comment, like, gift, and avatar feedback in the mobile stream view.
-- Validation sheet: `docs/douyin-live-validation-1.0.6.md`
+- Latest cloud code change: low-price colored fairy-stick gifts can be distinguished by `sec_magic_gift_id` first, then readable color names, while keeping existing encrypted gift ids compatible. Deployed and directly verified on Douyin Cloud release `427801`.
+- Gift ability config: saved as four 1-diamond fairy-stick variants: `仙女棒`, `蓝色仙女棒`, `紫色仙女棒`, `黄色仙女棒`.
+- Remaining gate: wait for `1.0.7_` to reach `部署完成`, then relaunch/continue the phone live flow and verify real comment, like, all four low-price gifts, and avatar feedback in the mobile stream view.
+- Validation sheet: `docs/douyin-live-validation-1.0.7.md`
 
 APPID: `tt02d6746b9cb2fc0e10`
 
-Latest real live/debug-room status: on 2026-06-14 21:03-21:05 CST, the user's real live room `7651235730450058019` produced 7 real gift callbacks with real nickname and avatar URLs. The same room successfully started platform tasks for `live_like`, `live_comment`, and `live_gift`, but the latest queue still shows `live_like=0` and `live_comment=0`, so comment/like must be rechecked during the next live pass.
+Latest real live/debug-room status: on 2026-06-14 21:03-21:05 CST, the user's real live room `7651235730450058019` produced 7 real gift callbacks with real nickname and avatar URLs. The same room successfully started platform tasks for `live_like`, `live_comment`, and `live_gift`, but that real queue showed `live_like=0` and `live_comment=0`. After the cloud redeploy, a direct verification callback reset the event queue baseline to latestSeq `1`.
 
-This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, real platform gift callbacks are reaching the target cloud service, and debug package `1.0.6_` is deployed. The next gate is publishing the new cloud gift mapping, changing the platform gifts to low-price colored fairy-stick variants for debugging, then validating real comment/like/gift/avatar feedback in-game.
+This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, real platform gift callbacks are reaching the target cloud service, and debug package `1.0.7_` has been uploaded to bind the new low-price gift config. The next gate is waiting for `1.0.7_` to deploy, then validating real comment/like/gift/avatar feedback in-game.
 
 ## Historical Package Notes (1.0.2)
 
@@ -90,10 +91,10 @@ Current configured platform mapping as of 2026-06-14 13:47:
 - Gift ability config: `仙女棒（1钻石）` -> 10 pistol soldiers, `能力药丸（10钻石）` -> 10 shotgun soldiers, `能量电池（99钻石）` -> 10 machine-gun soldiers, `超级空投（888钻石）` -> 10 giant soldiers.
 - Cloud callback normalization now emits `giftType` so the existing Cocos client bridge can route each configured gift tier without rebuilding the client package.
 
-Target debug gift mapping after the 2026-06-14 real-live pass:
+Current debug gift mapping after the 2026-06-14 real-live pass:
 
-- For easier live-room testing, configure all four gift tiers as low-price colored `仙女棒` variants when the platform UI allows it.
-- The cloud service should map them to the same existing soldier outputs: default/red fairy stick -> 10 pistol soldiers, blue/cyan/green fairy stick -> 10 shotgun soldiers, purple fairy stick -> 10 machine-gun soldiers, gold/yellow/orange fairy stick -> 10 giant soldiers.
+- For easier live-room testing, all four gift tiers are configured as low-price `仙女棒` variants.
+- The saved platform mapping is: `仙女棒（1钻石）` -> 10 pistol soldiers, `蓝色仙女棒（1钻石）` -> 10 shotgun soldiers, `紫色仙女棒（1钻石）` -> 10 machine-gun soldiers, `黄色仙女棒（1钻石）` -> 10 giant soldiers.
 - Real payloads may only expose encrypted `sec_gift_id` and `sec_magic_gift_id`; capture any new magic ids from `/api/live/events` and add them to `PLATFORM_MAGIC_GIFT_ID_TO_SOLDIER_TYPE`.
 
 Client cloud polling fallback:

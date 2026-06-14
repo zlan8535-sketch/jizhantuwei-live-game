@@ -1,3 +1,50 @@
+## 2026-06-14 21:54 - Colored Fairy Stick Platform Config And 1.0.7 Upload
+
+Status: Partial / Platform package uploaded, deployment still polling
+
+What changed:
+- Published Douyin Cloud release `427801` from Git commit `6fecfe08f50f57848234c1de4d1cd35625639243` with note `colored fairy stick gift mapping`.
+- Verified the deployed cloud service by posting a direct magic fairy-stick callback; response returned `giftType=shotgun` and `magicGiftId=9tPFzcpEQFovisU3j3coz5tqj/qQ5LHJQJWob/X5bLbxm1s7kYLj0aGSb4k=`.
+- Opened Open Platform gift ability config and saved the four debug gift tiers as low-price 1-diamond fairy-stick variants:
+  - `仙女棒（1钻石）` -> `普通士兵x10`
+  - `蓝色仙女棒（1钻石）` -> `短枪士兵x10`
+  - `紫色仙女棒（1钻石）` -> `机关枪士兵x10`
+  - `黄色仙女棒（1钻石）` -> `巨人士兵x10`
+- Created `release/douyin-debug/JiZhanTuWei_1.0.7.zip` by copying the deployed `1.0.6` package because the client resources did not change.
+- Uploaded debug package `1.0.7_` through Open Platform so the new gift config can bind to a fresh package version.
+
+Files touched:
+- `docs/gameplay-handoff.md`
+- `docs/douyin-platform-release-checklist.md`
+- `docs/douyin-live-validation-1.0.7.md`
+
+Generated artifacts:
+- `release/douyin-debug/JiZhanTuWei_1.0.7/`
+- `release/douyin-debug/JiZhanTuWei_1.0.7.zip`
+
+Commands run:
+- `git commit -m "Support colored fairy stick gift mapping"`
+- `git push origin main`
+- `Compress-Archive -LiteralPath release\douyin-debug\JiZhanTuWei_1.0.7 -DestinationPath release\douyin-debug\JiZhanTuWei_1.0.7.zip -CompressionLevel Optimal`
+- Chrome upload on `https://developer.open-douyin.com/sonic/tt02d6746b9cb2fc0e10/develop/version`
+
+Verification:
+- Git commit `6fecfe0 Support colored fairy stick gift mapping` was pushed to `origin/main`.
+- Douyin Cloud page showed publish status `成功` and `部署完成`; image tag used commit `6fecfe08f50f57848234c1de4d1cd35625639243`.
+- Remote verification callback returned `responseGiftType=shotgun`, `responseSeq=1`, `latestSeq=1`, proving the deployed cloud mapping is active. This also reset the post-deploy event baseline to seq `1`.
+- Gift ability page showed `保存成功，请确保对幸运魔方礼物消息完成适配后发版`.
+- `JiZhanTuWei_1.0.7.zip` size is `220752872`; SHA256 is `FA701378C0C273C88A3D485166D12AB8C3AA9CA615C37EB037353E44F89B5A11`.
+- Open Platform accepted the upload at `2026-06-14 21:47:21`; version page shows package `1.0.7_`, cloud start `1080P / 9:16`.
+
+Risks / notes:
+- As of the last poll in this step, the Open Platform version page still showed `1.0.7_` status `部署中`, not yet `部署完成`.
+- Platform config text says gift config is package-version-bound; use `1.0.7_` for the next live/debug test once deployment completes.
+- Real colored fairy-stick callbacks still need to be sent after `1.0.7_` is deployed so the remaining `sec_magic_gift_id` values can be captured and hard-mapped if the platform sends encrypted names only.
+- The direct verification callback means the active cloud queue now starts from latestSeq `1`, not the earlier real-live seq `7`.
+
+Next step:
+- Refresh the Open Platform version page until `1.0.7_` becomes `部署完成`; then run `docs/douyin-live-validation-1.0.7.md` from the phone/live companion flow and capture comment, like, and all four 1-diamond gift callbacks.
+
 ## 2026-06-14 21:28 - Real Live Gift Data And Low-Price Fairy Stick Mapping
 
 Status: Partial / Cloud code verified locally, needs Git push and Douyin Cloud deploy
