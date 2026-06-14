@@ -24,6 +24,7 @@ export interface ViewerRoleData {
     soldierIndex?: number;
     nickName: string;
     avatarIndex: number;
+    avatarUrl?: string;
     job: string;
     weaponType: GlobalEnum.WeaponType;
     isGiant: boolean;

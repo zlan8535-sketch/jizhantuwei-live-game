@@ -1,3 +1,40 @@
+## 2026-06-14 16:39 - Viewer Avatar URL And Round Head Preview
+
+Status: Done / Platform package upload still pending
+
+What changed:
+- Fixed live viewer avatar propagation for real Douyin callbacks: client now reads `avatarUrl`, `avatar_url`, and legacy `raw.avatar_url` from cloud events.
+- Cloud callback normalization now exposes top-level `avatarUrl` for future events.
+- Viewer soldier head UI now loads remote avatar images, clips them with a circular Cocos `Mask`, and uses smaller sizes: normal soldiers `10px`, giants `13px`.
+- Rebuilt web-mobile preview and refreshed `release/douyin-debug/JiZhanTuWei_1.0.2.zip`.
+
+Files touched:
+- `assets/Game/Script/Common/LevelManager.ts`
+- `assets/Game/Script/Custom/Role.ts`
+- `assets/Game/Script/Custom/RoleLayer.ts`
+- `douyin-cloud-service/server.js`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `C:\CocosCreator\3.8.3\CocosCreator.exe --project C:\projects\JiZhanTuWei_3.8.3ts --build "platform=web-mobile;debug=false"`
+- `node smoke-test.js` in `douyin-cloud-service`
+- Posted test `live_gift` and `live_comment` callbacks to the target Douyin Cloud service.
+- `Compress-Archive -LiteralPath release\douyin-debug\JiZhanTuWei_1.0.2 -DestinationPath release\douyin-debug\JiZhanTuWei_1.0.2.zip`
+
+Verification:
+- Local preview refreshed at `http://127.0.0.1:8080/index.html?v=1781426109622`.
+- Preview consumed cloud events seq `48` and `49`.
+- Screenshot verified avatars render as smaller circular images above viewer soldiers.
+- `release\douyin-debug\JiZhanTuWei_1.0.2.zip` contains `AvatarClip`, `GRAPHICS_ELLIPSE`, and `getLiveRawPayload` in `assets\Game\index.js`.
+- New package SHA256: `5C4545889054BCDC6CC0085C271CF45B60C73BA7CAA7FEA1070A9981760914AC`.
+
+Risks / notes:
+- Platform debug package still needs upload/redeploy before real live-room users see the round avatar fix.
+- Remote avatar loading depends on the Douyin image URL allowing browser access; tested sample URL returns CORS `*`.
+
+Next step:
+- Upload `C:\projects\JiZhanTuWei_3.8.3ts\release\douyin-debug\JiZhanTuWei_1.0.2.zip`, redeploy the debug package, relaunch from the official live/debug entry, then verify real comment/gift avatars in-platform.
+
 ## 2026-06-14 15:58 - Debug Package 1.0.1 Deployment Complete
 
 Status: Done / Real live-room feedback needs verification

@@ -1,4 +1,4 @@
-import { _decorator, Camera, Color, Component, director, Graphics, Label, Node, UITransform, Vec2, v3, clamp, Vec3, clamp01 } from 'cc';
+import { _decorator, assetManager, Camera, Color, Component, director, Graphics, ImageAsset, Label, Mask, Node, Sprite, SpriteFrame, Texture2D, UITransform, Vec2, v3, clamp, Vec3, clamp01 } from 'cc';
 import { GlobalConfig, WeaponCfg } from '../../../Init/Config/GlobalConfig';
 import GlobalData from '../../../Init/Config/GlobalData';
 import { GlobalEnum } from '../../../Init/Config/GlobalEnum';
@@ -25,6 +25,7 @@ type ViewerProfileData = {
     viewerId: string;
     nickName: string;
     avatarIndex: number;
+    avatarUrl?: string;
     job: string;
     weaponType: GlobalEnum.WeaponType;
     totalSoldiers: number;
@@ -39,6 +40,7 @@ type AddViewerRolesData = {
     viewerId?: string;
     nickName?: string;
     avatarIndex?: number;
+    avatarUrl?: string;
     job?: string;
     isGiant?: boolean;
     giantLv?: number;
@@ -428,6 +430,8 @@ export class RoleLayer extends BasicLayer {
     viewerAvatarLayer: Node = null;
     viewerAvatarCamera: Camera = null;
     viewerAvatarRecs: { [uuid: string]: { node: Node, role: Role } } = {};
+    viewerAvatarFrameCache: { [url: string]: SpriteFrame } = {};
+    viewerAvatarFrameLoading: { [url: string]: ((frame: SpriteFrame) => void)[] } = {};
     liveRankPanel: Node = null;
     liveDamageRankLabels: Label[] = [];
     liveTakenRankLabels: Label[] = [];
@@ -503,6 +507,7 @@ export class RoleLayer extends BasicLayer {
                 viewerId,
                 nickName: d && d.nickName ? d.nickName : `V${avatarIndex}`,
                 avatarIndex,
+                avatarUrl: d && d.avatarUrl ? d.avatarUrl : '',
                 job: d && d.job ? d.job : this.viewerJobs[Math.floor(Math.random() * this.viewerJobs.length)],
                 weaponType: weaponType ?? this.viewerWeapons[Math.floor(Math.random() * this.viewerWeapons.length)],
                 totalSoldiers: 0,
@@ -514,6 +519,9 @@ export class RoleLayer extends BasicLayer {
             this.viewerProfiles[viewerId] = profile;
         } else if (weaponType !== undefined) {
             profile.weaponType = weaponType;
+        }
+        if (d && d.avatarUrl) {
+            profile.avatarUrl = d.avatarUrl;
         }
         return profile;
     }
@@ -528,6 +536,7 @@ export class RoleLayer extends BasicLayer {
             soldierIndex,
             nickName: profile.nickName,
             avatarIndex: profile.avatarIndex,
+            avatarUrl: profile.avatarUrl,
             job: profile.job,
             weaponType: profile.weaponType,
             isGiant,
@@ -657,11 +666,13 @@ export class RoleLayer extends BasicLayer {
         const node = new Node(`Avatar_${role.viewerData.nickName}`);
         node.parent = this.viewerAvatarLayer;
         node.layer = this.viewerAvatarLayer.layer;
+        const avatarSize = role.viewerData.isGiant ? 13 : 10;
+        const fallbackSize = avatarSize + 2;
         const trans = node.addComponent(UITransform);
-        trans.setContentSize(18, 18);
+        trans.setContentSize(fallbackSize, fallbackSize);
         const graphics = node.addComponent(Graphics);
         graphics.fillColor = this.viewerAvatarColors[role.viewerData.avatarIndex % this.viewerAvatarColors.length];
-        graphics.circle(0, 0, role.viewerData.isGiant ? 10 : 8);
+        graphics.circle(0, 0, fallbackSize * 0.5);
         graphics.fill();
 
         const labelNode = new Node('Label');
@@ -669,9 +680,9 @@ export class RoleLayer extends BasicLayer {
         labelNode.layer = node.layer;
         labelNode.setPosition(0, 0, 0);
         const labelTrans = labelNode.addComponent(UITransform);
-        labelTrans.setContentSize(18, 18);
+        labelTrans.setContentSize(fallbackSize, fallbackSize);
         const label = labelNode.addComponent(Label);
-        label.fontSize = 8;
+        label.fontSize = role.viewerData.isGiant ? 8 : 6;
         label.color = Color.WHITE;
         label.horizontalAlign = Label.HorizontalAlign.CENTER;
         label.verticalAlign = Label.VerticalAlign.CENTER;
@@ -679,7 +690,83 @@ export class RoleLayer extends BasicLayer {
         label.enableWrapText = false;
         label.string = role.viewerData.isGiant ? 'G' : role.viewerData.job.charAt(0);
 
+        this.applyViewerAvatarImage(node, labelNode, role.viewerData.avatarUrl, avatarSize);
         this.viewerAvatarRecs[role.node.uuid] = { node, role };
+    }
+
+    private applyViewerAvatarImage(node: Node, labelNode: Node, avatarUrl: string, avatarSize: number) {
+        const url = this.normalizeAvatarUrl(avatarUrl);
+        if (!url) return;
+
+        const clipNode = new Node('AvatarClip');
+        clipNode.parent = node;
+        clipNode.layer = node.layer;
+        clipNode.setPosition(0, 0, 0);
+        const clipTrans = clipNode.addComponent(UITransform);
+        clipTrans.setContentSize(avatarSize, avatarSize);
+        const mask = clipNode.addComponent(Mask);
+        mask.type = Mask.Type.GRAPHICS_ELLIPSE;
+        mask.segments = 24;
+
+        const imageNode = new Node('AvatarImage');
+        imageNode.parent = clipNode;
+        imageNode.layer = clipNode.layer;
+        imageNode.setPosition(0, 0, 0);
+        const imageTrans = imageNode.addComponent(UITransform);
+        imageTrans.setContentSize(avatarSize, avatarSize);
+        const sprite = imageNode.addComponent(Sprite);
+        sprite.sizeMode = Sprite.SizeMode.CUSTOM;
+
+        this.loadViewerAvatarFrame(url, (frame) => {
+            if (!frame || !node.isValid || !clipNode.isValid || !imageNode.isValid || !sprite.isValid) return;
+            sprite.spriteFrame = frame;
+            if (labelNode && labelNode.isValid) {
+                labelNode.active = false;
+            }
+        });
+    }
+
+    private normalizeAvatarUrl(url?: string) {
+        const value = String(url || '').trim();
+        if (!value) return '';
+        return value.replace(/^http:\/\//, 'https://');
+    }
+
+    private loadViewerAvatarFrame(url: string, cb: (frame: SpriteFrame) => void) {
+        const cached = this.viewerAvatarFrameCache[url];
+        if (cached) {
+            cb(cached);
+            return;
+        }
+        if (this.viewerAvatarFrameLoading[url]) {
+            this.viewerAvatarFrameLoading[url].push(cb);
+            return;
+        }
+        this.viewerAvatarFrameLoading[url] = [cb];
+        assetManager.loadRemote<ImageAsset>(url, { ext: this.getAvatarImageExt(url) }, (err, imageAsset) => {
+            let frame: SpriteFrame = null;
+            if (err || !imageAsset) {
+                console.warn('Viewer avatar load failed:', url, err);
+            } else {
+                const texture = new Texture2D();
+                texture.image = imageAsset;
+                frame = new SpriteFrame();
+                frame.texture = texture;
+                this.viewerAvatarFrameCache[url] = frame;
+            }
+            const callbacks = this.viewerAvatarFrameLoading[url] || [];
+            delete this.viewerAvatarFrameLoading[url];
+            for (let i = 0; i < callbacks.length; i++) {
+                callbacks[i](frame);
+            }
+        });
+    }
+
+    private getAvatarImageExt(url: string) {
+        const clean = url.split('?')[0].toLowerCase();
+        if (clean.indexOf('.png') >= 0) return '.png';
+        if (clean.indexOf('.webp') >= 0) return '.webp';
+        return '.jpg';
     }
 
     private removeViewerAvatar(uuid: string) {

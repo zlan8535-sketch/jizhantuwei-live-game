@@ -304,6 +304,17 @@ function normalizeCallback(body) {
   );
   const giftName = pickFirst(payload.gift_name, payload.giftName, data.gift_name, data.giftName, gift.gift_name, gift.giftName, gift.name, giftId);
   const giftValue = Number(pickFirst(payload.gift_value, payload.giftValue, data.gift_value, data.giftValue, gift.gift_value, gift.giftValue) || 0);
+  const avatarUrl = pickFirst(
+    payload.avatar_url,
+    payload.avatarUrl,
+    payload.avatar,
+    data.avatar_url,
+    data.avatarUrl,
+    data.avatar,
+    user.avatar_url,
+    user.avatarUrl,
+    user.avatar
+  );
 
   return {
     msgType,
@@ -325,6 +336,7 @@ function normalizeCallback(body) {
       user.sec_openid
     ),
     nickName: pickFirst(payload.nickname, payload.nickName, payload.user_nickname, data.nickname, data.nickName, user.nickname, user.nickName, user.nick_name),
+    avatarUrl,
     giftName,
     giftId,
     giftValue,

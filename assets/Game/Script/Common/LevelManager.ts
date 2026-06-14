@@ -29,7 +29,9 @@ type LivePayload = {
     nickname?: string;
     userName?: string;
     avatarUrl?: string;
+    avatar_url?: string;
     avatar?: string;
+    raw?: any;
     content?: string;
     count?: number;
     num?: number;
@@ -53,7 +55,9 @@ type LiveCloudEvent = {
     nickName?: string;
     nickname?: string;
     avatarUrl?: string;
+    avatar_url?: string;
     avatar?: string;
+    raw?: any;
     count?: number;
     giftId?: string;
     giftName?: string;
@@ -804,6 +808,7 @@ export class LevelManager extends Component {
 
     private toLivePayload(event: LiveCloudEvent): LivePayload {
         const viewerId = String(event.viewerId || event.userId || event.openId || event.secUid || event.msgId || `cloud-${event.seq || ++this.liveGmViewerIndex}`);
+        const raw = this.getLiveRawPayload(event.raw);
         return {
             viewerId,
             userId: event.userId,
@@ -811,7 +816,7 @@ export class LevelManager extends Component {
             secUid: event.secUid,
             nickName: event.nickName || event.nickname || viewerId,
             nickname: event.nickname,
-            avatarUrl: event.avatarUrl,
+            avatarUrl: event.avatarUrl || event.avatar || event.avatar_url || raw.avatarUrl || raw.avatar_url || raw.avatar,
             avatar: event.avatar,
             content: event.comment || event.content,
             count: Math.max(1, Math.floor(Number(event.count || 1))),
@@ -819,6 +824,13 @@ export class LevelManager extends Component {
             giftName: event.giftName,
             giftType: event.giftType,
         };
+    }
+
+    private getLiveRawPayload(raw: any) {
+        if (!raw) return {};
+        if (Array.isArray(raw)) return raw[0] || {};
+        if (raw.data && typeof raw.data == 'object') return raw.data;
+        return raw;
     }
 
     private tryBindDouyinLiveApis(g: any, bridge: any) {
@@ -849,9 +861,9 @@ export class LevelManager extends Component {
         return {
             viewerId,
             nickName,
-            avatarUrl: payload.avatarUrl || payload.avatar || '',
+            avatarUrl: payload.avatarUrl || payload.avatar || payload.avatar_url || '',
             count,
-            giftKey: String(payload.giftId || payload.giftType || payload.id || payload.giftName || '').toLowerCase(),
+            giftKey: String(payload.giftType || payload.giftName || payload.giftId || payload.id || '').toLowerCase(),
             giftName: String(payload.giftName || payload.giftId || payload.giftType || payload.id || ''),
         };
     }
