@@ -1,3 +1,30 @@
+## 2026-06-14 18:43 - Release Checklist Current Status Clarified
+
+Status: Done / Goal still needs phone live visual verification
+
+What changed:
+- Added a `Current Authoritative Status` block to `docs/douyin-platform-release-checklist.md`.
+- Marked the older `1.0.2` package details as historical notes so future continuation does not confuse them with the deployed `1.0.5_` package.
+- Rechecked the target Douyin Cloud health endpoint while updating release docs.
+
+Files touched:
+- `docs/douyin-platform-release-checklist.md`
+- `docs/gameplay-handoff.md`
+
+Commands run:
+- `GET https://1m3j5q7o3dezm-env-cuABsk2rKR.service.douyincloud.run/api/health`
+
+Verification:
+- Release checklist now states current debug package `1.0.5_`, upload package `release/douyin-debug/JiZhanTuWei_1.0.5.zip`, SHA256 `5F1231147EDB2ADFFCEDC64296F4FA2D76092167C6BC53799FD5158C020E750E`, cloud start `1080P / 9:16`, and the remaining phone/live companion validation gate.
+- Cloud health returned `{"code":0,"message":"ok","service":"jizhantuwei-live-cloud-service"}`.
+
+Risks / notes:
+- This is documentation cleanup only; no client or cloud code changed.
+- The full objective remains unproven until the user relaunches `1.0.5_` and validates real phone/live visuals plus comment/like/gift feedback.
+
+Next step:
+- Wait for phone/live companion validation of `1.0.5_`; if the avatar size is still off, retune `RoleLayer.ts`, rebuild, and upload the next debug package.
+
 ## 2026-06-14 18:40 - GitHub Publish After 1.0.5
 
 Status: Done / Goal still needs phone live visual verification

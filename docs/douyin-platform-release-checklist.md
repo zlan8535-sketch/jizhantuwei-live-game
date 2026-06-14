@@ -1,12 +1,27 @@
 # Douyin Platform Release Checklist
 
+## Current Authoritative Status
+
+- APPID: `tt02d6746b9cb2fc0e10`
+- Current debug package: `1.0.5_`
+- Platform status: deployed on 2026-06-14 18:25, cloud start enabled at `1080P / 9:16`
+- Upload package: `release/douyin-debug/JiZhanTuWei_1.0.5.zip`
+- Package SHA256: `5F1231147EDB2ADFFCEDC64296F4FA2D76092167C6BC53799FD5158C020E750E`
+- Package size: `220752873`
+- Launch exe: `JiZhanTuWei.exe`
+- Live mechanics: comment, like, and gift callbacks are connected through the target Douyin Cloud service.
+- Latest client change: phone-oriented round viewer avatar sizing, normal `18px`, giant `22px`.
+- Remaining gate: relaunch `1.0.5_` from phone/live companion and visually verify avatar size plus comment/like/gift feedback in the real mobile stream view.
+
 APPID: `tt02d6746b9cb2fc0e10`
 
 Latest real live/debug-room status: on 2026-06-14 15:14, the user live debug launch produced real Douyin Cloud callbacks for like, comment, and gift. The in-game package initially had no feedback because the uploaded client did not have a default cloud URL when launched by the platform. The client fallback was fixed in `1.0.1`. On 2026-06-14 16:46, `1.0.2` was uploaded to the Open Platform and later showed `1.0.2_` with status `部署完成`; this package adds real viewer avatar propagation and smaller round soldier-head avatars. The next gate is relaunching the `1.0.2_` debug package and verifying real in-game feedback.
 
 This file tracks the remaining platform-side work for the live interactive build. The Cocos client package is prepared, the cloud-service source is deployed to the target Douyin Cloud env, a dedicated JiZhanTuWei GitHub remote is connected, platform comment/gift/like callbacks are reaching the target cloud service, and debug package `1.0.2_` is deployed. The next gate is relaunching the debug package so the platform-running client starts cloud polling without a local preview query parameter, then validating real comment/like/gift/avatar feedback in-game.
 
-## Current Package
+## Historical Package Notes (1.0.2)
+
+The section below is retained for historical context. For the current package, use `Current Authoritative Status` above.
 
 - Upload package: `release/douyin-debug/JiZhanTuWei_1.0.2.zip`
 - Package SHA256: `5C4545889054BCDC6CC0085C271CF45B60C73BA7CAA7FEA1070A9981760914AC`
