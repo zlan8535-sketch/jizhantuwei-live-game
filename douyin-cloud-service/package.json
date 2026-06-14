@@ -1,0 +1,14 @@
+{
+  "name": "jizhantuwei-live-cloud-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal Douyin Cloud callback service for the JiZhanTuWei live debug package.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "smoke": "node smoke-test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

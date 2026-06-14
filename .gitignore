@@ -1,0 +1,33 @@
+
+#///////////////////////////
+# Cocos Creator 3D Project
+#///////////////////////////
+.DS_Store
+library/
+temp/
+local/
+build/
+profiles/
+native
+release/
+
+# Local screenshots and release notes captured during platform debugging.
+/*.png
+/*.log
+douyin-*.png
+gm-verify-*.png
+
+#//////////////////////////
+# NPM
+#//////////////////////////
+node_modules/
+
+#//////////////////////////
+# VSCode
+#//////////////////////////
+.vscode/
+
+#//////////////////////////
+# WebStorm
+#//////////////////////////
+.idea/

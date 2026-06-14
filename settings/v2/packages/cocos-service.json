@@ -1,0 +1,29 @@
+{
+  "__version__": "3.0.7",
+  "game": {
+    "name": "未知游戏",
+    "app_id": "tt02d6746b9cb2fc0e10",
+    "c_id": "0"
+  },
+  "appConfigMaps": [
+    {
+      "app_id": "tt02d6746b9cb2fc0e10",
+      "config_id": "0b2417"
+    }
+  ],
+  "configs": [
+    {
+      "app_id": "tt02d6746b9cb2fc0e10",
+      "config_id": "0b2417",
+      "config_name": "Default",
+      "config_remarks": "",
+      "services": [
+        {
+          "service_id": "314",
+          "enable": false,
+          "param": {}
+        }
+      ]
+    }
+  ]
+}
